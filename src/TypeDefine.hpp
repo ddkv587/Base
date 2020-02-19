@@ -25,6 +25,7 @@ namespace NET
     typedef         size_t                          KEY;
 
     typedef         ::std::string                   STRING;
+    typedef         ::std::vector                   SVECTOR;
     typedef         ::std::queue                    SQUEUE;
     typedef         ::std::stack                    SSTACK;
     typedef         ::std::list                     SLIST;
