@@ -13,21 +13,24 @@ namespace Base
             m_threadVector.emplace( new STHREAD( ::std::bind( &CThreadPool::innerLoop, this ) ) );
         }
         // init task queue
-
-        m_bAvailable = TRUE;
     }
 
     CThreadPool::~CThreadPool()
     {
-        ;
+        destroy();
     }
 
     void CThreadPool::start()
     {
-        ;
+        m_bAvailable = TRUE;
     }
 
     void CThreadPool::stop()
+    {
+        m_bAvailable = FALSE;
+    }
+
+    void CThreadPool::destroy()
     {
         if ( !m_bStop ) {
             m_bStop = TRUE;
@@ -40,14 +43,9 @@ namespace Base
         }
     }
 
-    void CThreadPool::destroy()
-    {
-        ;
-    }
-
     BOOLEAN CThreadPool::addTask( TASK t )
     {
-        if ( t ) 
+        if ( m_bAvailable && t ) 
             m_taskQueue.push_back( t );
 
         notify();
