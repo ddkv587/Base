@@ -2,19 +2,17 @@ include $(CLEAR_VARS)
 
 TARGET_MODULE  := Base
 
-CPP_INCLUDE    := -I$(SOURCE_ROOT)/src/include \
-                  -I$(SOURCE_ROOT)/src/third_include \
-                  -I$(SOURCE_ROOT)/src/source/RenderEngine_GraphicsUtility \
-                  -I$(SOURCE_ROOT)/src/source/RenderEngine_OpenGLES2 \
+CPP_INCLUDE    := -I$(SOURCE_ROOT)/Base \
                   -I$(SYSROOT)/usr/include 
-CPP_SRCDIR     := $(SOURCE_ROOT)/src/source/RenderEngine_OpenGLES2
-PCH_H          := $(CPP_SRCDIR)/RenderEngine.h
+CPP_SRCDIR     := $(SOURCE_ROOT)/Base
+PCH_H          := $(CPP_SRCDIR)/CBase.hpp
 
 CPP_SRC        := $(shell find $(CPP_SRCDIR) -name "*.cpp")
+C_SRC          := $(shell find $(CPP_SRCDIR) -name "*.c")
 
-LIBS           += -lRenderEngine_GraphicsUtility -lOpenHMI_Native -lEGL -lGLESv2
+LIBS           += 
 
-LIBS_DIR       += -L$(SOURCE_ROOT)/target/qnx/$(PROJECT_NAME)/Release -L$(SOURCE_ROOT)/src/third_lib/qnx/$(PROJECT_NAME)
-LIBS_DIR_DEBUG += -L$(SOURCE_ROOT)/target/qnx/$(PROJECT_NAME)/Debug -L$(SOURCE_ROOT)/src/third_lib/qnx/$(PROJECT_NAME)
+LIBS_DIR       += -L$(TARGET_ROOT)/Release
+LIBS_DIR_DEBUG += -L$(TARGET_ROOT)/Debug
 
 include $(BUILD_SHARED_LIBRARY)

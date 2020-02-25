@@ -2,7 +2,7 @@ export PROJECT_NAME=demo
 export PLATFROM=linux_x86_64
 export PLATFROM_MACRO="-DOS_LINUX"
 
-export SOURCE_ROOT=../src
+export PROJECT_ROOT=..
 
 #export ARCH=
 export CPP=g++

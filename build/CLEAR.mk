@@ -11,3 +11,5 @@ LIBS_DIR_DEBUG     :=
 APP_NAME           :=
 TARGET_MODULE      :=
 DEPS_LIBRARIES     :=
+SOURCE_ROOT        := $(PROJECT_ROOT)/src
+TARGET_ROOT        := $(PROJECT_ROOT)/target
