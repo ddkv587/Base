@@ -42,11 +42,12 @@ namespace NET
     typedef         ::std::condition_variable       SCONDITION;
     typedef         ::std::function                 SFUNCTION;
 
-    template< class T > using SVECTOR       = ::std::vector< T >;
-    template< class T > using SLIST         = ::std::list< T >;
-    template< class T > using SQUEUE        = ::std::queue< T >;
-    template< class T > using SSTACK        = ::std::stack< T >;
-    template< class T > using SMAP          = ::std::map< Key, Value, Compare = ::std::less< Key > >;
+    template< class T > using SVECTOR          = ::std::vector< T >;
+    template< class T > using SLIST            = ::std::list< T >;
+    template< class T > using SQUEUE           = ::std::queue< T >;
+    template< class T > using SSTACK           = ::std::stack< T >;
+    template< class Key, class Valve, class Compare > 
+    using SMAP                                 = ::std::map< Key, Value, Compare = ::std::less< Key > >;
 
     #ifndef TRUE
     #define TRUE                        true
