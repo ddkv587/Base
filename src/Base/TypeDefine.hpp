@@ -1,6 +1,15 @@
 #ifndef __TYPEDEFINE_HPP__
 #define __TYPEDEFINE_HPP__
 
+#include <cstdint>
+#include <string>
+#include <vector>
+#include <queue>
+#include <stack>
+#include <list>
+#include <map>
+#include <mutex>
+
 namespace NET
 {
     typedef         char                            CHAR;
@@ -25,15 +34,16 @@ namespace NET
     typedef         size_t                          KEY;
 
     typedef         ::std::string                   STRING;
-    typedef         ::std::vector                   SVECTOR;
-    typedef         ::std::queue                    SQUEUE;
-    typedef         ::std::stack                    SSTACK;
-    typedef         ::std::list                     SLIST;
-    typedef         ::std::map                      SMAP;
+    typedef         ::std::thread                   STHREAD;
     typedef         ::std::mutex                    SMUTEX;
     typedef         ::std::condition_variable       SCONDITION;
     typedef         ::std::function                 SFUNCTION;
-    typedef         ::std::thread                   STHREAD;
+
+    using SVECTOR       = ::std::vector< T >;
+    using SLIST         = ::std::list< T >;
+    using SQUEUE        = ::std::queue< T >;
+    using SSTACK        = ::std::stack< T >;
+    using SMAP          = ::std::map< Key, Value, Compare = ::std::less< Key > >;
 
     #ifndef TRUE
     #define TRUE                        true
