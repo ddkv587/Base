@@ -46,7 +46,7 @@ namespace NET
     template< class T > using SLIST            = ::std::list< T >;
     template< class T > using SQUEUE           = ::std::queue< T >;
     template< class T > using SSTACK           = ::std::stack< T >;
-    template< class Key, class Valve, class Compare > 
+    template< class Key, class Value, class Compare > 
     using SMAP                                 = ::std::map< Key, Value, Compare = ::std::less< Key > >;
 
     #ifndef TRUE
