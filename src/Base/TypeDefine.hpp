@@ -9,6 +9,9 @@
 #include <list>
 #include <map>
 #include <mutex>
+#include <thread>
+#include <functional>
+#include <condition_variable>
 
 namespace NET
 {
@@ -39,11 +42,11 @@ namespace NET
     typedef         ::std::condition_variable       SCONDITION;
     typedef         ::std::function                 SFUNCTION;
 
-    using SVECTOR       = ::std::vector< T >;
-    using SLIST         = ::std::list< T >;
-    using SQUEUE        = ::std::queue< T >;
-    using SSTACK        = ::std::stack< T >;
-    using SMAP          = ::std::map< Key, Value, Compare = ::std::less< Key > >;
+    template< class T > using SVECTOR       = ::std::vector< T >;
+    template< class T > using SLIST         = ::std::list< T >;
+    template< class T > using SQUEUE        = ::std::queue< T >;
+    template< class T > using SSTACK        = ::std::stack< T >;
+    template< class T > using SMAP          = ::std::map< Key, Value, Compare = ::std::less< Key > >;
 
     #ifndef TRUE
     #define TRUE                        true
