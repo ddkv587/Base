@@ -40,8 +40,8 @@ namespace NET
     typedef         ::std::thread                   STHREAD;
     typedef         ::std::mutex                    SMUTEX;
     typedef         ::std::condition_variable       SCONDITION;
-    typedef         ::std::function                 SFUNCTION;
 
+    template< >         using SFUNCTION        = ::std::function<>;
     template< class T > using SVECTOR          = ::std::vector< T >;
     template< class T > using SLIST            = ::std::list< T >;
     template< class T > using SQUEUE           = ::std::queue< T >;
