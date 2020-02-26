@@ -48,7 +48,7 @@ namespace NET
     template< class T > using SSTACK           = ::std::stack< T >;
 
     template< class Key, class Value, class Compare = ::std::less<Key> > 
-    using SMAP             = ::std::map< Key, Value, Compare = ::std::less< Key > >;
+    using SMAP             = ::std::map< Key, Value, Compare >;
     template< class R, class... Args >
     using SFUNCTION        = ::std::function< R( Args... ) >;
 
