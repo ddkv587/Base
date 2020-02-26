@@ -38,7 +38,7 @@ namespace Base
             broadcast();
 
             for ( auto it = m_threadVector.begin(); it != m_threadVector.end(); ++it ) {
-                (*it)->join();
+                (*it).join();
             }
         }
     }
