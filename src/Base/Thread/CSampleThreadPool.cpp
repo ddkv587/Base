@@ -45,10 +45,10 @@ namespace Base
 
     BOOLEAN CThreadPool::addTask( TASK t )
     {
-        if ( m_bAvailable && t ) 
-            m_taskQueue.push( t );
+        // if ( m_bAvailable && t ) 
+        //     m_taskQueue.push( t );
 
-        notify();
+        // notify();
 
         return TRUE;
     }
