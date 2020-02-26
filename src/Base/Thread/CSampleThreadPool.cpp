@@ -60,7 +60,8 @@ namespace Base
             if ( t ) {
                 (*t)();
             } else {
-                m_treadCondition.wait( new ::std::unique_lock<SMUTEX>( m_threadMutex ), [this] { return !m_taskQueue.empty(); } );
+                ::std::unique_lock<SMUTEX> ulock( m_threadMutex );
+                m_treadCondition.wait( ulock, [this] { return !m_taskQueue.empty(); } );
             }
         }
     } 
