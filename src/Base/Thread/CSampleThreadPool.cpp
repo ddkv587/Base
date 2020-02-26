@@ -56,10 +56,11 @@ namespace Base
     void CThreadPool::innerLoop()
     {
         while ( !m_bStop ) {
-            auto t = task();
-            if ( t ) {
-                //t(NULL);
-            } else {
+            //auto t = task();
+            // if ( t ) {
+            //     //t(NULL);
+            // } else 
+            {
                 ::std::unique_lock<SMUTEX> ulock( m_threadMutex );
                 m_treadCondition.wait( ulock, [this] { return !m_taskQueue.empty(); } );
             }
