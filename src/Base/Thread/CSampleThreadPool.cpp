@@ -72,10 +72,10 @@ namespace Base
         ::std::lock_guard<SMUTEX> lk( m_taskMutex );
 
         TASK t = NULL;
-        if ( !m_taskQueue.empty() ) {
-            t = m_taskQueue.front();
-            m_taskQueue.pop();
-        }
+        // if ( !m_taskQueue.empty() ) {
+        //     t = m_taskQueue.front();
+        //     m_taskQueue.pop();
+        // }
 
         return t;
     }
