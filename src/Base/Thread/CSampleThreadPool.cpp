@@ -66,7 +66,7 @@ namespace Base
         }
     } 
     
-    TASK CThreadPool::task()
+    CThreadPool::TASK CThreadPool::task()
     {
         ::std::lock_guard<SMUTEX> lk( m_taskMutex );
 
