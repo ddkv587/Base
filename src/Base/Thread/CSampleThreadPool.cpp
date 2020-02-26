@@ -46,7 +46,7 @@ namespace Base
     BOOLEAN CThreadPool::addTask( TASK t )
     {
         if ( m_bAvailable && t ) 
-            m_taskQueue.push_back( t );
+            m_taskQueue.push( t );
 
         notify();
     }
@@ -54,11 +54,11 @@ namespace Base
     void CThreadPool::innerLoop()
     {
         while ( !m_bStop ) {
-            auto t = parent->task();
+            auto t = task();
             if ( t ) {
                 t();
             } else {
-                m_treadCondition.wait( new ::std::unique_lock<SMUTEX>( m_threadMutex ), [] { return !m_taskQueue.empty(); } );
+                m_treadCondition.wait( new ::std::unique_lock<SMUTEX>( m_threadMutex ), [this] { return !m_taskQueue.empty(); } );
             }
         }
     } 
