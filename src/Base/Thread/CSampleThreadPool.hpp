@@ -14,7 +14,7 @@ namespace Base
     class CThreadPool
     {
         private:
-            typedef SFUNCTION< void(void*) >    TASK;   
+            typedef ::std::function< void(void*) >    TASK;   
 
         public:
             void                    start();
