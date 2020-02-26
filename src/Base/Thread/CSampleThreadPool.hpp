@@ -7,6 +7,8 @@
 #ifndef __CSAMPLETHREADMANAGERHPP__
 #define __CSAMPLETHREADMANAGERHPP__
 
+#include "TypeDefine.hpp"
+
 namespace Base
 {
     class CThreadPool
