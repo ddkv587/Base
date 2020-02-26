@@ -1,0 +1,25 @@
+# Windows:
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+~$*
+
+# Windows Project Files
+*.vcproj.*
+*.vcproj
+*.ncb
+*.suo
+
+# build Files
+target/
+im_*/
+
+# Log Files
+*.log
+log.txt
+
+# doc
+doc/
+
+# tool
+tool/
