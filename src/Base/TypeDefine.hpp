@@ -13,7 +13,7 @@
 #include <functional>
 #include <condition_variable>
 
-namespace NET
+namespace Base
 {
     typedef         char                            CHAR;
     typedef         int8_t                          INT8;
