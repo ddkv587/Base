@@ -49,6 +49,8 @@ namespace Base
             m_taskQueue.push( t );
 
         notify();
+
+        return TRUE;
     }
 
     void CThreadPool::innerLoop()
@@ -56,7 +58,7 @@ namespace Base
         while ( !m_bStop ) {
             auto t = task();
             if ( t ) {
-                t();
+                (*t)();
             } else {
                 m_treadCondition.wait( new ::std::unique_lock<SMUTEX>( m_threadMutex ), [this] { return !m_taskQueue.empty(); } );
             }
