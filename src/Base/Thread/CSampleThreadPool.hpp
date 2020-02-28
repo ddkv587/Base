@@ -22,7 +22,7 @@ namespace Base
             void                    destroy();
 
             BOOLEAN                 addTask( TASK );
-            
+
             CThreadPool( UINT uiThreadSize, UINT uiTaskSize = 100 );
             virtual ~CThreadPool();
 
