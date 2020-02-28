@@ -10,7 +10,7 @@ namespace Base
     {
         // init thread queue
         for ( UINT ui = 0; ui < uiThreadSize; ++ui ) {
-            m_threadVector.push_back( new STHREAD( ::std::bind( &CThreadPool::innerLoop, this ) ) );
+            m_threadVector.emplace_back( new ::std::thread( ::std::bind( &CThreadPool::innerLoop, this ) ) );
         }
         // init task queue
     }
