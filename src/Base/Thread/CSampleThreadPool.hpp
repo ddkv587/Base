@@ -31,7 +31,7 @@ namespace Base
             CThreadPool( CThreadPool&& ) = delete;
 
         private:
-            void                    innerLoop(  );
+            void                    innerLoop();
             TASK                    task();
 
             void                    notify();
@@ -44,7 +44,7 @@ namespace Base
             UINT                                    m_uiThreadSize;
             SMUTEX                                  m_threadMutex;
             SCONDITION                              m_treadCondition;
-            SVECTOR< STHREAD >                      m_threadVector;
+            SVECTOR< ::std::thread* >                      m_threadVector;
 
             UINT                                    m_uiTaskSize;
             SMUTEX                                  m_taskMutex;
