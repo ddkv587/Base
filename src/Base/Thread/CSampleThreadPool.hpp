@@ -44,7 +44,7 @@ namespace Base
             UINT                                    m_uiThreadSize;
             SMUTEX                                  m_threadMutex;
             SCONDITION                              m_treadCondition;
-            SVECTOR< ::std::thread* >                      m_threadVector;
+            SVECTOR< STHREAD* >                     m_threadVector;
 
             UINT                                    m_uiTaskSize;
             SMUTEX                                  m_taskMutex;
