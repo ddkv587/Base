@@ -14,3 +14,4 @@ DEPS_LIBRARIES     :=
 SOURCE_ROOT        := $(ROOT_PATH)/src
 PROJECT_ROOT       := $(ROOT_PATH)/Project
 TARGET_ROOT        := $(ROOT_PATH)/target
+IM_ROOT_PREX       := $(ROOT_PATH)/im_
