@@ -2,15 +2,6 @@
 RELEASE_TARGET          := $(TARGET_MODULE)
 DEBUG_TARGET            := $(TARGET_MODULE)_DEBUG
 
-ifeq ($(APP_NAME),)
-THIRD_LIBRARY_PATH		:= $(SOURCE_ROOT)/src/third_lib/qnx/$(PROJECT_NAME)
-CPP_TARGETDIR           := $(SOURCE_ROOT)/target/qnx/$(PROJECT_NAME)/Release
-CPP_TARGETDIR_DEBUG     := $(SOURCE_ROOT)/target/qnx/$(PROJECT_NAME)/Debug
-CPP_OBJECT_MIDDLE       := $(SOURCE_ROOT)/im_qnx_$(PROJECT_NAME)/$(TARGET_MODULE)/Release
-CPP_OBJECT_MIDDLE_DEBUG := $(SOURCE_ROOT)/im_qnx_$(PROJECT_NAME)/$(TARGET_MODULE)/Debug
-SDK_LIBRARIES           := $(SOURCE_ROOT)/target/qnx/$(PROJECT_NAME)/Release
-SDK_LIBRARIES_DEBUG     := $(SOURCE_ROOT)/target/qnx/$(PROJECT_NAME)/Debug
-else
 THIRD_LIBRARY_PATH		:= $(APP_ROOT)/src/third_lib/qnx/$(PROJECT_NAME)
 CPP_TARGETDIR           := $(APP_ROOT)/projects/$(APP_NAME)/target/qnx/$(PROJECT_NAME)/Release
 CPP_TARGETDIR_DEBUG     := $(APP_ROOT)/projects/$(APP_NAME)/target/qnx/$(PROJECT_NAME)/Debug
@@ -18,12 +9,11 @@ CPP_OBJECT_MIDDLE       := $(APP_ROOT)/im_qnx_$(PROJECT_NAME)/$(APP_NAME)/$(TARG
 CPP_OBJECT_MIDDLE_DEBUG := $(APP_ROOT)/im_qnx_$(PROJECT_NAME)/$(APP_NAME)/$(TARGET_MODULE)/Debug
 SDK_LIBRARIES           := $(APP_ROOT)/target/qnx/$(PROJECT_NAME)/Release
 SDK_LIBRARIES_DEBUG     := $(APP_ROOT)/target/qnx/$(PROJECT_NAME)/Debug
-endif
 
 COPY_LIBRARIES          := $(DEPS_LIBRARIES:%.so=$(SDK_LIBRARIES)/%.so)
 COPY_LIBRARIES_DEBUG    := $(DEPS_LIBRARIES:%.so=$(SDK_LIBRARIES_DEBUG)/%.so)
 
-COPY_LIBRARIES_THIRD          := $(DEPS_LIBRARIES_THIRD:%.so=$(THIRD_LIBRARY_PATH)/%.so)
+COPY_LIBRARIES_THIRD    := $(DEPS_LIBRARIES_THIRD:%.so=$(THIRD_LIBRARY_PATH)/%.so)
 
 CPP_APP_OBJECT          := $(foreach filename,$(CPP_SRC:%.cpp=%.o),$(subst $(CPP_SRCDIR),$(CPP_OBJECT_MIDDLE),$(filename)))
 CPP_APP_OBJECT_DEBUG    := $(foreach filename,$(CPP_SRC:%.cpp=%.o),$(subst $(CPP_SRCDIR),$(CPP_OBJECT_MIDDLE_DEBUG),$(filename)))
