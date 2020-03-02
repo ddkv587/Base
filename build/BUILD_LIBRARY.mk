@@ -68,7 +68,7 @@ endif
 $(CPP_APP_OBJECT): $(CPP_OBJECT_MIDDLE)%.o: $(CPP_SRCDIR)%.cpp $(PCH)
 	@echo $(notdir $<)
 	@$(MKDIR) $(dir $@)
-	@$(CPP) $(TARGET_ARCH) -I$(CPP_OBJECT_MIDDLE) $(CPP_INCLUDE) $(CFLAGS) -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
+	$(CPP) $(TARGET_ARCH) -I$(CPP_OBJECT_MIDDLE) $(CPP_INCLUDE) $(CFLAGS) -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
 
 $(CPP_APP_OBJECT_DEBUG): $(CPP_OBJECT_MIDDLE_DEBUG)%.o: $(CPP_SRCDIR)%.cpp $(PCH_DEBUG)
 	@echo $(notdir $<)
@@ -77,7 +77,7 @@ $(CPP_APP_OBJECT_DEBUG): $(CPP_OBJECT_MIDDLE_DEBUG)%.o: $(CPP_SRCDIR)%.cpp $(PCH
 
 $(RELEASE_TARGET): $(CPP_APP_OBJECT) $(C_APP_OBJECT)
 	@echo '> Linking: $@'
-	$(CPP) $(TARGET_ARCH) $(CFLAGS) -shared -o $@ $(CPP_APP_OBJECT) $(C_APP_OBJECT) $(LIBS_DIR) $(LIBS)
+	$(CPP) $(TARGET_ARCH) -shared -o $@ $(CPP_APP_OBJECT) $(C_APP_OBJECT) $(LIBS_DIR) $(LIBS)
 	@echo '> Striping: $@'
 	@$(STRIP) $(RELEASE_TARGET)
 	@$(MKDIR) $(CPP_TARGETDIR)
