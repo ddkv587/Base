@@ -1,0 +1,17 @@
+include $(CLEAR_VARS)
+
+TARGET_MODULE  := Demo
+
+CPP_INCLUDE    := -I$(PROJECT_ROOT)/Demo \
+                  -I$(SOURCE_ROOT)/Base
+CPP_SRCDIR     := -I$(PROJECT_ROOT)/Demo
+
+CPP_SRC        := $(shell find $(CPP_SRCDIR) -name "*.cpp")
+C_SRC          := $(shell find $(CPP_SRCDIR) -name "*.c")
+
+LIBS           += 
+
+LIBS_DIR       += -L$(TARGET_ROOT)/Release
+LIBS_DIR_DEBUG += -L$(TARGET_ROOT)/Debug
+
+include $(BUILD_SHARED_LIBRARY)

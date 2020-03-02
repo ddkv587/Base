@@ -39,6 +39,7 @@ do_make()
 }
 
 do_make Base
+do_make Project/Demo
 
 echo
 echo ------------ make-$MAKE_ACTION Success! ------------

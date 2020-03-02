@@ -1,8 +1,7 @@
-export PROJECT_NAME=demo
 export PLATFROM=linux_x86_64
 export PLATFROM_MACRO="-DOS_LINUX"
 
-export PROJECT_ROOT=`pwd`/..
+export ROOT_PATH=`pwd`/..
 
 #export ARCH=
 export CPP=g++
