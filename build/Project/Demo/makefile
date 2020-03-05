@@ -3,9 +3,9 @@ include $(CLEAR_VARS)
 TARGET_MODULE  := Demo
 APP_NAME       := Demo
 
-CPP_INCLUDE    := -I$(PROJECT_ROOT)/Demo \
+CPP_INCLUDE    := -I$(PROJECT_ROOT)/Demo/src \
                   -I$(SOURCE_ROOT)/Base
-CPP_SRCDIR     := $(PROJECT_ROOT)/Demo
+CPP_SRCDIR     := $(PROJECT_ROOT)/Demo/src
 
 CPP_SRC        := $(shell find $(CPP_SRCDIR) -name "*.cpp")
 C_SRC          := $(shell find $(CPP_SRCDIR) -name "*.c")
