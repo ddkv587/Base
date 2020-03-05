@@ -24,7 +24,7 @@ echo PROJECT_NAME=$PROJECT_NAME
 do_make()
 {
 	echo ---------------------------------------------------
-	echo make-$MAKE_ACTION $1 for $PLATFROM_$PROJECT_NAME ...
+	echo make-$MAKE_ACTION $1 for $PLATFORM_$PROJECT_NAME ...
 	echo ---------------------------------------------------
 
 	cd ./$1
