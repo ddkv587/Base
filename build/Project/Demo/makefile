@@ -10,7 +10,7 @@ CPP_SRCDIR     := $(PROJECT_ROOT)/Demo/src
 CPP_SRC        := $(shell find $(CPP_SRCDIR) -name "*.cpp")
 C_SRC          := $(shell find $(CPP_SRCDIR) -name "*.c")
 
-LIBS           += -lBase
+LIBS           += -lBase -lpthread
 
 LIBS_DIR       += -L$(TARGET_ROOT)/$(PLATFORM)/$(PROJECT_NAME)/Release
 LIBS_DIR_DEBUG += -L$(TARGET_ROOT)/$(PLATFORM)/$(PROJECT_NAME)/Debug
