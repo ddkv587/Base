@@ -32,9 +32,11 @@ namespace Base
 
     void CThreadPool::destroy()
     {
+        printf( "destroy\n" );
         if ( !m_bStop ) {
             m_bStop = TRUE;
 
+            printf( "destroy broadcast\n" );
             broadcast();
 
             for ( auto it = m_threadVector.begin(); it != m_threadVector.end(); ++it ) {
