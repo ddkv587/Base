@@ -42,6 +42,7 @@ namespace Base
             BOOLEAN                                 m_bAvailable;
 
             UINT                                    m_uiThreadSize;
+            SMUTEX                                  m_threadMutex;
             SCONDITION                              m_treadCondition;
             SVECTOR< STHREAD* >                     m_threadVector;
 
