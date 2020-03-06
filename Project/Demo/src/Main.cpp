@@ -7,7 +7,7 @@ static ::Base::INT s_mark = 0;
 void task()
 {
     ::std::lock_guard< ::std::mutex > guard( s_mutex );
-    
+
     s_mark++;
     ::std::cout << "mark: " << s_mark << ::std::endl;
 }
@@ -23,6 +23,8 @@ int main(int argc, char const *argv[])
     }
 
     getchar();
+
+    pool.destroy();
 
     return 0;
 }
