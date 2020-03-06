@@ -22,7 +22,8 @@ int main(int argc, char const *argv[])
     }
 
     pool.stop();
-    getchar();
+    char c;
+    ::std::cin >> c;
 
     pool.destroy();
 
