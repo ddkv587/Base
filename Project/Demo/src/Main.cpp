@@ -22,7 +22,8 @@ int main(int argc, char const *argv[])
         pool.addTask( task );
     }
 
-    //getchar();
+    pool.stop();
+    getchar();
 
     pool.destroy();
 
