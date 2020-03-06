@@ -2,9 +2,12 @@
 #include "CBase.hpp"
 
 static ::Base::INT s_mark = 0;
+::std::mutex s_mutex;
 
 void task()
 {
+    ::std::lock_guard< ::std::mutex > guard( s_mutex );
+    
     s_mark++;
     ::std::cout << "mark: " << s_mark << ::std::endl;
 }
