@@ -3,8 +3,8 @@ include $(CLEAR_VARS)
 TARGET_MODULE  := Demo
 APP_NAME       := Demo
 
-CFLAGS         += -Wl,-rpath,.
-CFLAGS_DEBUG   += -Wl,-rpath,.
+LINK_FLAGS         := -Wl,-rpath,.
+LINK_FLAGS_DEBUG   := -Wl,-rpath,.
 
 CPP_INCLUDE    := -I$(PROJECT_ROOT)/Demo/src \
                   -I$(SOURCE_ROOT)/Base
