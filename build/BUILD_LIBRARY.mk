@@ -68,7 +68,7 @@ endif
 $(CPP_APP_OBJECT): $(CPP_OBJECT_MIDDLE)%.o: $(CPP_SRCDIR)%.cpp $(PCH)
 	@echo $(notdir $<)
 	@$(MKDIR) $(dir $@)
-	$(CPP) $(TARGET_ARCH) -I$(CPP_OBJECT_MIDDLE) $(CPP_INCLUDE) $(CFLAGS) -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
+	@$(CPP) $(TARGET_ARCH) -I$(CPP_OBJECT_MIDDLE) $(CPP_INCLUDE) $(CFLAGS) -MF"$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -o "$@" "$<"
 
 $(CPP_APP_OBJECT_DEBUG): $(CPP_OBJECT_MIDDLE_DEBUG)%.o: $(CPP_SRCDIR)%.cpp $(PCH_DEBUG)
 	@echo $(notdir $<)
