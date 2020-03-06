@@ -11,8 +11,6 @@ namespace Base
         // init thread queue
         for ( UINT ui = 0; ui < uiThreadSize; ++ui ) {
             m_threadVector.emplace_back( new STHREAD( ::std::bind( &CThreadPool::innerLoop, this ) ) );
-           
-            printf( "create thread %lld\n", m_threadVector.back()->get_id() );
         }
         // init task queue
     }
@@ -66,6 +64,8 @@ namespace Base
                 m_treadCondition.wait( ulock, [this] { return ( ( !m_bStop ) && ( !m_taskQueue.empty() ) ); } );
             }
         }
+
+        printf( "thread %lld exit!\n", ::std::this_thread::get_id() );
     } 
     
     CThreadPool::TASK CThreadPool::task()
