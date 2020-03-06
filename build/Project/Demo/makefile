@@ -12,8 +12,8 @@ C_SRC          := $(shell find $(CPP_SRCDIR) -name "*.c")
 
 LIBS           += -lBase
 
-LIBS_DIR       += -L$(TARGET_ROOT)/Release
-LIBS_DIR_DEBUG += -L$(TARGET_ROOT)/Debug
+LIBS_DIR       += -L$(TARGET_ROOT)/$(PLATFORM)/$(PROJECT_NAME)/Release
+LIBS_DIR_DEBUG += -L$(TARGET_ROOT)/$(PLATFORM)/$(PROJECT_NAME)/Debug
 
 DEPS_LIBRARIES += libBase.so
 
