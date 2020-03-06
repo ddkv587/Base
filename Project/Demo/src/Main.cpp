@@ -20,6 +20,8 @@ int main(int argc, char const *argv[])
 
     for ( ::Base::INT i=0; i < 100; ++i ) {
         pool.addTask( task );
+
+        printf("add task: %d\n", i);
     }
 
     pool.stop();
