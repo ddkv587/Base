@@ -12,7 +12,7 @@ namespace Base
         for ( UINT ui = 0; ui < uiThreadSize; ++ui ) {
             m_threadVector.emplace_back( new STHREAD( ::std::bind( &CThreadPool::innerLoop, this ) ) );
            
-            printf( "create thread %d\n", m_threadVector.back()->get_id() );
+            printf( "create thread %lld\n", m_threadVector.back()->get_id() );
         }
         // init task queue
     }

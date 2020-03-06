@@ -8,8 +8,7 @@ void task()
 {
     //::std::lock_guard< ::std::mutex > guard( s_mutex );
 
-    s_mark++;
-    ::std::cout << "thread: " << ::std::this_thread::get_id() << ", mark: " << s_mark << ::std::endl;
+    ::std::cout << "thread: " << ::std::this_thread::get_id() << ", mark: " << s_mark++ << ::std::endl;
 }
 
 int main(int argc, char const *argv[])
