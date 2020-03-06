@@ -9,7 +9,7 @@ void task()
     ::std::lock_guard< ::std::mutex > guard( s_mutex );
 
     s_mark++;
-    ::std::cout << "thread: " << s_mark << pthread_self() << "mark: " << s_mark << ::std::endl;
+    ::std::cout << "thread: " << s_mark << pthread_self() << ", mark: " << s_mark << ::std::endl;
 }
 
 int main(int argc, char const *argv[])
