@@ -25,7 +25,5 @@ int main(int argc, char const *argv[])
 
     getchar();
 
-    pool.destroy();
-
     return 0;
 }
