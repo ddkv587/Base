@@ -14,14 +14,14 @@ namespace Base
     class CThreadPool
     {
         private:
-            typedef ::std::function< void() >    TASK;   
+            typedef void ( *TASK )( void* );
 
         public:
             void                    start();
             void                    stop();
             void                    destroy();
 
-            BOOLEAN                 addTask( TASK );
+            BOOLEAN                 addTask( TASK, void* );
 
             CThreadPool( UINT uiThreadSize, UINT uiTaskSize = 100 );
             virtual ~CThreadPool();
@@ -48,7 +48,7 @@ namespace Base
 
             UINT                                    m_uiTaskSize;
             SMUTEX                                  m_taskMutex;
-            SQUEUE< TASK >                          m_taskQueue;
+            SQUEUE< ::std::function< TASK > >       m_taskQueue;
     };
 } //Base
 #endif

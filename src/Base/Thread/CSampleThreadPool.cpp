@@ -41,13 +41,15 @@ namespace Base
                 
                 (*it)->join();
             }
+
+            m_taskQueue.clear();
         }
     }
 
-    BOOLEAN CThreadPool::addTask( TASK t )
+    BOOLEAN CThreadPool::addTask( TASK t, void* args )
     {
         if ( m_bAvailable && t ) 
-            m_taskQueue.push( t );
+            m_taskQueue.push( ::std::function<TASK>( t, args ) );
 
          notify();
 

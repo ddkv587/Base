@@ -4,14 +4,15 @@
 
 using namespace std::chrono_literals;
 
-static ::Base::INT s_mark = 0;
 ::std::mutex s_mutex;
 
-void task()
+void task(  void *pData )
 {
     //::std::lock_guard< ::std::mutex > guard( s_mutex );
 
-    ::std::cout << "thread: " << ::std::this_thread::get_id() << ", mark: " << s_mark++ << ::std::endl;
+    ::Base::INT index = static_cast< ::Base::INT* >( pData );
+
+    ::std::cout << "thread: " << ::std::this_thread::get_id() << ", index: " << index << ::std::endl;
 
     std::this_thread::sleep_for(2s);
 }
@@ -23,7 +24,7 @@ int main(int argc, char const *argv[])
     pool.start();
 
     for ( ::Base::INT i=0; i < 5; ++i ) {
-        pool.addTask( task );
+        pool.addTask( task, &i );
     }
 
     pool.stop();
