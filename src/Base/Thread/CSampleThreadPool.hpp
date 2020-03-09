@@ -7,7 +7,6 @@
 #ifndef __CSAMPLETHREADMANAGERHPP__
 #define __CSAMPLETHREADMANAGERHPP__
 
-#include <functional>
 #include "TypeDefine.hpp"
 
 namespace Base
@@ -19,7 +18,7 @@ namespace Base
 
             struct tagTask
             {
-                ::std::function< TASK >     func;
+                ::std::function<TASK>       func;
                 void*                       pData;
             };
 
