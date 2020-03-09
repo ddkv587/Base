@@ -16,6 +16,12 @@ namespace Base
         private:
             typedef void ( *TASK )( void* );
 
+            struct tagTask
+            {
+                ::std::function< TASK >     func;
+                void*                       pData;
+            };
+
         public:
             void                    start();
             void                    stop();
@@ -48,7 +54,7 @@ namespace Base
 
             UINT                                    m_uiTaskSize;
             SMUTEX                                  m_taskMutex;
-            SQUEUE< ::std::function< TASK > >       m_taskQueue;
+            SQUEUE< tagTask >                       m_taskQueue;
     };
 } //Base
 #endif

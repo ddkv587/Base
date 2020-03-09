@@ -42,14 +42,15 @@ namespace Base
                 (*it)->join();
             }
 
+            ::std::lock_guard<SMUTEX> lk( m_taskQueue );
             m_taskQueue.clear();
         }
     }
 
     BOOLEAN CThreadPool::addTask( TASK t, void* args )
     {
-        if ( m_bAvailable && t ) 
-            m_taskQueue.push( ::std::function<TASK>( t, args ) );
+        if ( m_bAvailable && t )
+            m_taskQueue.emplace( ::std::function<TASK>( t, ::std::placeholders::_1 ), args );
 
          notify();
 
