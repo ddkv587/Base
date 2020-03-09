@@ -22,7 +22,7 @@ int main(int argc, char const *argv[])
 
     pool.start();
 
-    for ( ::Base::INT i=0; i < 100; ++i ) {
+    for ( ::Base::INT i=0; i < 5; ++i ) {
         pool.addTask( task );
     }
 
