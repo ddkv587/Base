@@ -7,7 +7,7 @@
 #ifndef __CSAMPLETHREADMANAGERHPP__
 #define __CSAMPLETHREADMANAGERHPP__
 
-#include <function>
+#include <functional>
 #include "TypeDefine.hpp"
 
 namespace Base
