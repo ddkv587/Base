@@ -18,7 +18,7 @@ void task()
 
 int main(int argc, char const *argv[])
 {
-    ::Base::CThreadPool pool( 10, 100 );
+    ::Base::CThreadPool pool( 10, 5 );
 
     pool.start();
 
