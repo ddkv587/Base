@@ -6,7 +6,6 @@ chmod a+x make*
 dos2unix *
 dos2unix */*
 
-
 ./make-clean
 #./make-debug
 ./make-release
