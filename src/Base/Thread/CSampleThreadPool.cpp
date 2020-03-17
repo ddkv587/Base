@@ -51,7 +51,7 @@ namespace Base
     BOOLEAN CThreadPool::addTask( PTRTASK t, void* args )
     {
         if ( m_bAvailable && t )
-            m_taskQueue.emplace( ::stdfunction< PTRTASK >( t, std::placeholders::_1 ) );
+            m_taskQueue.emplace( ::std::function< PTRTASK >( t, std::placeholders::_1 ) );
 
         notify();
 
