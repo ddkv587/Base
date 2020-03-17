@@ -42,7 +42,7 @@ namespace Base
                 (*it)->join();
             }
 
-            ::std::lock_guard<SMUTEX> lk( m_taskQueue );
+            ::std::lock_guard<SMUTEX> lk( m_taskMutex );
             m_taskQueue.clear();
         }
     }

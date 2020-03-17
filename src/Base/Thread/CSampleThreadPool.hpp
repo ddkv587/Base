@@ -18,8 +18,8 @@ namespace Base
 
             struct tagTask
             {
-                ::std::function<void(void*)>           operate;
-                void*                           argument;
+                ::std::function<void(void*)>        operate;
+                void*                               argument;
             };
 
         public:
@@ -54,7 +54,7 @@ namespace Base
 
             UINT                                    m_uiTaskSize;
             SMUTEX                                  m_taskMutex;
-            SQUEUE< tagTask >                          m_taskQueue;
+            SQUEUE< tagTask >                       m_taskQueue;
     };
 } //Base
 #endif
