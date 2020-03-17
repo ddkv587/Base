@@ -11,7 +11,9 @@ void task(  void *pData )
 {
     //::std::lock_guard< ::std::mutex > guard( s_mutex );
 
-    ::Base::INT index = static_cast< ::Base::INT* >( pData );
+    ::Base::INT index = 0;
+    if ( pData )
+        static_cast< ::Base::INT* >( pData );
 
     ::std::cout << "thread: " << ::std::this_thread::get_id() << ", index: " << index << ::std::endl;
 
