@@ -51,7 +51,7 @@ namespace Base
     BOOLEAN CThreadPool::addTask( PTRTASK t, void* args )
     {
         if ( m_bAvailable && t )
-            m_taskQueue.emplace( ::std::function< void(void*) >( t, std::placeholders::_1 ) );
+            m_taskQueue.emplace( ::std::function< void(void*) >( t ) );
 
         notify();
 
@@ -63,7 +63,7 @@ namespace Base
         while ( !m_bStop ) {
             auto t = task();
             if ( t ) {
-                t->();
+                t->( NULL );
             } else {
                 ::std::unique_lock<SMUTEX> ulock( m_threadMutex );
                 m_treadCondition.wait( ulock, [this] { return ( m_bStop || ( !m_taskQueue.empty() ) ); } );
