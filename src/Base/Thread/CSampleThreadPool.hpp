@@ -67,7 +67,7 @@ namespace Base
 
             UINT                                    m_uiTaskSize;
             SMUTEX                                  m_taskMutex;
-            SQUEUE< ::std::function< PTRTASK > >    m_taskQueue;
+            SQUEUE< ::std::function< void(void*) > >    m_taskQueue;
     };
 } //Base
 #endif
