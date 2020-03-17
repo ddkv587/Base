@@ -11,7 +11,7 @@
 
 namespace Base
 {
-    typedef void ( *PTRTASK )();
+    typedef void ( *PTRTASK )( void* );
 
     class CThreadPool
     {
