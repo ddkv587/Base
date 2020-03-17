@@ -18,7 +18,7 @@ namespace Base
 
             struct tagTask
             {
-                ::std::function<TASK>           operate;
+                ::std::function<void(void*)>           operate;
                 void*                           argument;
             };
 
