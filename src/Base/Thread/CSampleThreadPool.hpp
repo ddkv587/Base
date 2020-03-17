@@ -31,7 +31,7 @@ namespace Base
                     return ( NULL != operate );
                 }
 
-                ::std::function<PTRTASK>            operate;
+                ::std::function< void(void*) >            operate;
                 void*                               argument;
             };
 
