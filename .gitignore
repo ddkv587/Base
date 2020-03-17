@@ -9,6 +9,7 @@ Desktop.ini
 *.vcproj
 *.ncb
 *.suo
+*.opensdf
 
 # build Files
 target/

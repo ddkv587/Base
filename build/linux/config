@@ -1,0 +1,9 @@
+export PROJECT_NAME=Base
+export PLATFORM=linux_x86_64
+export PLATFORM_MACRO="-DOS_LINUX"
+
+export ROOT_PATH=`pwd`/../..
+
+#export ARCH=
+export CPP=g++
+

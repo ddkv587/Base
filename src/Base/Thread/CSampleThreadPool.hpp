@@ -7,19 +7,34 @@
 #ifndef __CSAMPLETHREADMANAGERHPP__
 #define __CSAMPLETHREADMANAGERHPP__
 
+#include <functional>
 #include "TypeDefine.hpp"
+
+using namespace std;
 
 namespace Base
 {
     class CThreadPool
     {
         private:
-            typedef void ( *TASK )( void* );
+            typedef void ( *PTRTASK )( void* );
 
             struct tagTask
             {
-                ::std::function<void(void*)>        operate;
-                void*                               argument;
+				tagTask()
+					: operate( NULL )
+					, argument( NULL )
+				{
+					;
+				}
+
+				BOOLEAN valid()
+				{
+					return ( NULL != operate );
+				}
+
+				PTRTASK								operate;
+                void*								argument;
             };
 
         public:
@@ -27,7 +42,7 @@ namespace Base
             void                    stop();
             void                    destroy();
 
-            BOOLEAN                 addTask( TASK, void* );
+			BOOLEAN                 addTask( PTRTASK, void* );
 
             CThreadPool( UINT uiThreadSize, UINT uiTaskSize = 100 );
             virtual ~CThreadPool();
@@ -38,7 +53,7 @@ namespace Base
 
         private:
             void                    innerLoop();
-            tagTask*                task();
+			const tagTask&          task();
 
             void                    notify();
             void                    broadcast();
