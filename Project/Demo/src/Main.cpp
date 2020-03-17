@@ -1,5 +1,6 @@
 #include <iostream>
 #include <chrono>
+#include <functional>
 #include "CBase.hpp"
 
 using namespace std::chrono_literals;

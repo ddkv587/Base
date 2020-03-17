@@ -7,18 +7,17 @@
 #ifndef __CSAMPLETHREADMANAGERHPP__
 #define __CSAMPLETHREADMANAGERHPP__
 
-#include <functional>
 #include "TypeDefine.hpp"
-
-using namespace std;
 
 namespace Base
 {
+	typedef void ( *PTRTASK )();
+
     class CThreadPool
     {
         private:
-            typedef void ( *PTRTASK )( void* );
-
+           
+			/*
             struct tagTask
             {
 				tagTask()
@@ -33,16 +32,17 @@ namespace Base
 					return ( NULL != operate );
 				}
 
-				PTRTASK								operate;
+				::std::function<PTRTASK>			operate;
                 void*								argument;
             };
+			*/
 
         public:
             void                    start();
             void                    stop();
             void                    destroy();
 
-			BOOLEAN                 addTask( PTRTASK, void* );
+			BOOLEAN                 addTask( PTRTASK, void*);
 
             CThreadPool( UINT uiThreadSize, UINT uiTaskSize = 100 );
             virtual ~CThreadPool();
@@ -52,8 +52,8 @@ namespace Base
             CThreadPool( CThreadPool&& ) = delete;
 
         private:
-            void                    innerLoop();
-			const tagTask&          task();
+            void							innerLoop();
+			::std::function<PTRTASK>		task();
 
             void                    notify();
             void                    broadcast();
@@ -69,7 +69,7 @@ namespace Base
 
             UINT                                    m_uiTaskSize;
             SMUTEX                                  m_taskMutex;
-            SQUEUE< tagTask >                       m_taskQueue;
+			SQUEUE< ::std::function<PTRTASK> >      m_taskQueue;
     };
 } //Base
 #endif

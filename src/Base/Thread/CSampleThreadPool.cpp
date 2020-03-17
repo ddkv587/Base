@@ -44,14 +44,14 @@ namespace Base
 
             ::std::lock_guard<SMUTEX> lk( m_taskMutex );
 
-            SQUEUE<tagTask>().swap( m_taskQueue );
+			SQUEUE< ::std::function<PTRTASK> >().swap(m_taskQueue);
         }
     }
 
 	BOOLEAN CThreadPool::addTask( PTRTASK t, void* args )
     {
         if ( m_bAvailable && t )
-			m_taskQueue.emplace( t, args );
+			m_taskQueue.emplace(t);
 
          notify();
 
@@ -62,8 +62,8 @@ namespace Base
     {
         while ( !m_bStop ) {
             auto t = task();
-            if ( t.valid() ) {
-				t.operate( t.argument );
+            if ( t ) {
+				//t->();
             } else {
                 ::std::unique_lock<SMUTEX> ulock( m_threadMutex );
                 m_treadCondition.wait( ulock, [this] { return ( m_bStop || ( !m_taskQueue.empty() ) ); } );
@@ -73,7 +73,7 @@ namespace Base
         printf( "thread %lld exit!\n", ::std::this_thread::get_id() );
     } 
     
-	const CThreadPool::tagTask& CThreadPool::task()
+	::std::function<PTRTASK> CThreadPool::task()
     {
         ::std::lock_guard<SMUTEX> lk( m_taskMutex );
 
@@ -84,7 +84,7 @@ namespace Base
 			return t;
         }
 
-		return tagTask();
+		return NULL;
     }
 
     void CThreadPool::notify()
