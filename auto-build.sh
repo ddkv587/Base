@@ -1,7 +1,7 @@
 #!/bin/bash
 ROOT=`pwd`
 
-cd ./build/ 
+cd ./build/linux
 chmod a+x make*
 dos2unix *
 dos2unix */*
