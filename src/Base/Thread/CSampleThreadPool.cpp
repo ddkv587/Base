@@ -44,7 +44,8 @@ namespace Base
 
             ::std::lock_guard<SMUTEX> lk( m_taskMutex );
 
-            SQUEUE<int>().swap(m_taskQueue);
+            SQUEUE<int> empty;
+            ::std::swap( m_taskQueue, empty );
         }
     }
 
