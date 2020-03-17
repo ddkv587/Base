@@ -11,38 +11,36 @@
 
 namespace Base
 {
-	typedef void ( *PTRTASK )();
+    typedef void ( *PTRTASK )();
 
     class CThreadPool
     {
         private:
            
-			/*
             struct tagTask
             {
-				tagTask()
-					: operate( NULL )
-					, argument( NULL )
-				{
-					;
-				}
+                tagTask()
+                    : operate( NULL )
+                    , argument( NULL )
+                {
+                    ;
+                }
 
-				BOOLEAN valid()
-				{
-					return ( NULL != operate );
-				}
+                BOOLEAN valid()
+                {
+                    return ( NULL != operate );
+                }
 
-				::std::function<PTRTASK>			operate;
-                void*								argument;
+                ::std::function<PTRTASK>            operate;
+                void*                               argument;
             };
-			*/
 
         public:
             void                    start();
             void                    stop();
             void                    destroy();
 
-			BOOLEAN                 addTask( PTRTASK, void*);
+            BOOLEAN                 addTask( PTRTASK, void* );
 
             CThreadPool( UINT uiThreadSize, UINT uiTaskSize = 100 );
             virtual ~CThreadPool();
@@ -52,11 +50,11 @@ namespace Base
             CThreadPool( CThreadPool&& ) = delete;
 
         private:
-            void							innerLoop();
-			::std::function<PTRTASK>		task();
+            void                            innerLoop();
+            PTRTASK                         task();
 
-            void                    notify();
-            void                    broadcast();
+            void                            notify();
+            void                            broadcast();
 
         private:
             BOOLEAN                                 m_bStop;
@@ -69,7 +67,7 @@ namespace Base
 
             UINT                                    m_uiTaskSize;
             SMUTEX                                  m_taskMutex;
-			SQUEUE< ::std::function<PTRTASK> >      m_taskQueue;
+            SQUEUE< ::std::function< PTRTASK > >    m_taskQueue;
     };
 } //Base
 #endif
