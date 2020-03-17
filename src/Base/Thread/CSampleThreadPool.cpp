@@ -44,14 +44,14 @@ namespace Base
 
             ::std::lock_guard<SMUTEX> lk( m_taskMutex );
 
-            SQUEUE< ::std::function<PTRTASK> >().swap(m_taskQueue);
+            SQUEUE< ::std::function< void(void*) > >().swap(m_taskQueue);
         }
     }
 
     BOOLEAN CThreadPool::addTask( PTRTASK t, void* args )
     {
         if ( m_bAvailable && t )
-            m_taskQueue.emplace( ::std::function< PTRTASK >( t, std::placeholders::_1 ) );
+            m_taskQueue.emplace( ::std::function< void(void*) >( t, std::placeholders::_1 ) );
 
         notify();
 
