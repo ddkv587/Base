@@ -63,7 +63,7 @@ namespace Base
         while ( !m_bStop ) {
             auto t = task();
             if ( t ) {
-                t->( NULL );
+                (*t)( NULL );
             } else {
                 ::std::unique_lock<SMUTEX> ulock( m_threadMutex );
                 m_treadCondition.wait( ulock, [this] { return ( m_bStop || ( !m_taskQueue.empty() ) ); } );
