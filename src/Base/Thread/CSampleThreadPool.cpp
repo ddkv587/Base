@@ -81,7 +81,7 @@ namespace Base
             auto t = m_taskQueue.front();
             m_taskQueue.pop();
 
-            return t.target();
+            return t.target<void(void*)>();
         }
 
         return NULL;
