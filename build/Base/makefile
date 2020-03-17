@@ -5,7 +5,7 @@ TARGET_MODULE  := Base
 CPP_INCLUDE    := -I$(SOURCE_ROOT)/Base \
                   -I$(SYSROOT)/usr/include 
 CPP_SRCDIR     := $(SOURCE_ROOT)/Base
-#PCH_H          := $(CPP_SRCDIR)/CBase.hpp
+PCH_H          := $(CPP_SRCDIR)/CBase.hpp
 
 #CPP_SRC        := $(shell find $(CPP_SRCDIR) -name "*.cpp")
 CPP_SRC        := $(shell find $(CPP_SRCDIR) -name "CSampleThreadPool.cpp")

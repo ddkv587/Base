@@ -18,8 +18,8 @@ namespace Base
 
             struct tagTask
             {
-                ::std::function<TASK>       func;
-                void*                       pData;
+                ::std::function<TASK>           operator;
+                void*                           argument;
             };
 
         public:
@@ -38,7 +38,7 @@ namespace Base
 
         private:
             void                    innerLoop();
-            TASK                    task();
+            tagTask*                task();
 
             void                    notify();
             void                    broadcast();
@@ -54,7 +54,7 @@ namespace Base
 
             UINT                                    m_uiTaskSize;
             SMUTEX                                  m_taskMutex;
-            SQUEUE< tagTask >                       m_taskQueue;
+            SQUEUE< tagTask >                          m_taskQueue;
     };
 } //Base
 #endif

@@ -62,7 +62,7 @@ namespace Base
         while ( !m_bStop ) {
             auto t = task();
             if ( t ) {
-                t();
+                t->operator( t->argument );
             } else {
                 ::std::unique_lock<SMUTEX> ulock( m_threadMutex );
                 m_treadCondition.wait( ulock, [this] { return ( m_bStop || ( !m_taskQueue.empty() ) ); } );
@@ -72,11 +72,11 @@ namespace Base
         printf( "thread %lld exit!\n", ::std::this_thread::get_id() );
     } 
     
-    CThreadPool::TASK CThreadPool::task()
+    tagTask* CThreadPool::task()
     {
         ::std::lock_guard<SMUTEX> lk( m_taskMutex );
 
-        TASK t = NULL;
+        tagTask* t = NULL;
         if ( !m_taskQueue.empty() ) {
             t = m_taskQueue.front();
             m_taskQueue.pop();
