@@ -3,7 +3,7 @@
 #include <functional>
 #include "CBase.hpp"
 
-using namespace std::chrono_literals;
+using namespace std::literals::chrono_literals;
 
 ::std::mutex s_mutex;
 
