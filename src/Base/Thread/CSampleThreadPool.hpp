@@ -2,17 +2,16 @@
  * @Author: ddkV587 
  * @Date: 2020-02-05 11:56:53 
  * @Last Modified by: ddkV587
- * @Last Modified time: 2020-02-05 21:12:00
+ * @Last Modified time: 2020-03-18 17:16:56
  */
-#ifndef __CSAMPLETHREADMANAGERHPP__
-#define __CSAMPLETHREADMANAGERHPP__
+
+#ifndef __BASE_CSAMPLETHREADMANAGERHPP__
+#define __BASE_CSAMPLETHREADMANAGERHPP__
 
 #include "TypeDefine.hpp"
 
 namespace Base
 {
-    
-
     class CThreadPool
     {
         public:

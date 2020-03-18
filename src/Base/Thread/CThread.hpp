@@ -1,7 +1,14 @@
+/*
+ * @Author: ddkV587 
+ * @Date: 2020-03-18 17:14:46 
+ * @Last Modified by: ddkV587
+ * @Last Modified time: 2020-03-18 17:16:44
+ */
+
 #ifndef __NET_CTHREADHPP__
 #define __NET_CTHREADHPP__
 
-namespace NET
+namespace Base
 {
     class CThreadPool;
 

@@ -1,5 +1,12 @@
-#ifndef __TYPEDEFINE_HPP__
-#define __TYPEDEFINE_HPP__
+/*
+ * @Author: ddkV587 
+ * @Date: 2020-03-18 17:15:04 
+ * @Last Modified by: ddkV587
+ * @Last Modified time: 2020-03-18 17:24:32
+ */
+
+#ifndef __BASE_TYPEDEFINE_HPP__
+#define __BASE_TYPEDEFINE_HPP__
 
 #include <cstdint>
 #include <string>
@@ -34,7 +41,7 @@ namespace Base
     typedef         UINT64                          ULONG;
     typedef         INT64                           LLONG;
     typedef         UINT64                          ULLONG;
-    typedef         size_t                          KEY;
+    typedef         size_t                          SIZE;
 
     typedef         ::std::string                   STRING;
     typedef         ::std::thread                   STHREAD;
