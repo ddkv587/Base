@@ -18,9 +18,9 @@ namespace Base
         private:
             struct tagTask
             {
-                tagTask()
-                    : pFunc( NULL )
-                    , pArgu( NULL )
+                tagTask( ::std::function< void(void*) > func = NULL, void* argu = NULL )
+                    : pFunc( func )
+                    , pArgu( argu )
                 {
                     ;
                 }
