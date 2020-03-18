@@ -9,7 +9,7 @@ using namespace std::chrono_literals;
 
 void task(  void *pData )
 {
-    //::std::lock_guard< ::std::mutex > guard( s_mutex );
+    ::std::lock_guard< ::std::mutex > guard( s_mutex );
 
     ::Base::INT index = 0;
     if ( pData )
