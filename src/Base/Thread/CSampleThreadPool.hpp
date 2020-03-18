@@ -25,7 +25,7 @@ namespace Base
                     ;
                 }
 
-                BOOL valid()
+                BOOLEAN valid()
                 {
                     return ( NULL != pFunc );
                 }
