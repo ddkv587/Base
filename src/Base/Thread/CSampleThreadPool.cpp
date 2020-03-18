@@ -75,7 +75,7 @@ namespace Base
         printf( "thread %lld exit!\n", ::std::this_thread::get_id() );
     } 
     
-    tagTask CThreadPool::task()
+    CThreadPool::tagTask CThreadPool::task()
     {
         ::std::lock_guard<SMUTEX> lk( m_taskMutex );
 
