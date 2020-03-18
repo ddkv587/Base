@@ -13,16 +13,16 @@ void task(  void *pData )
 
     ::Base::INT index = 0;
     if ( pData )
-        index = * ( static_cast< ::Base::INT* >( pData ) );
+        index = *( static_cast< ::Base::INT* >( pData ) );
 
     ::std::cout << "thread: " << ::std::this_thread::get_id() << ", index: " << index << ::std::endl;
 
-    std::this_thread::sleep_for(1s);
+    //std::this_thread::sleep_for(1s);
 }
 
 int main(int argc, char const *argv[])
 {
-    ::Base::CThreadPool pool( 10, 5 );
+    ::Base::CThreadPool pool( 10, 100 );
 
     pool.start();
 
