@@ -64,7 +64,7 @@ namespace Base
     {
         while ( !m_bStop ) {
             auto t = task();
-            if ( t ) {
+            if ( t.valid() ) {
                 t.pFunc( t.pArgu );
             } else {
                 ::std::unique_lock<SMUTEX> ulock( m_threadMutex );
