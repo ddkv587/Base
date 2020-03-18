@@ -27,7 +27,8 @@ int main(int argc, char const *argv[])
     pool.start();
 
     for ( ::Base::INT i=0; i < 100; ++i ) {
-        pool.addTask( task, &i );
+        int index = i;
+        pool.addTask( task, &index );
     }
 
     pool.stop();
