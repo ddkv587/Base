@@ -52,7 +52,7 @@ namespace Base
     {
         if ( m_bAvailable && t )
         {
-            m_taskQueue.push( new tagTask( ::std::function< void(void*) >( t ), argu ) );
+            m_taskQueue.emplace( tagTask( ::std::function< void(void*) >( t ), argu ) );
         }
 
         notify();
