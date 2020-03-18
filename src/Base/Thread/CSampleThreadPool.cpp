@@ -48,7 +48,7 @@ namespace Base
         }
     }
 
-    BOOLEAN CThreadPool::addTask( PTRTASK t, void* argu )
+    BOOLEAN CThreadPool::addTask( CThreadPool::PTRTASK t, void* argu )
     {
         if ( m_bAvailable && t )
         {

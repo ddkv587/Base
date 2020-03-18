@@ -11,10 +11,13 @@
 
 namespace Base
 {
-    typedef void ( *PTRTASK )( void* );
+    
 
     class CThreadPool
     {
+        public:
+            typedef void ( *PTRTASK )( void* );
+            
         private:
             struct tagTask
             {
