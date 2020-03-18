@@ -16,23 +16,22 @@ namespace Base
     class CThreadPool
     {
         private:
-           
             struct tagTask
             {
                 tagTask()
-                    : operate( NULL )
-                    , argument( NULL )
+                    : pFunc( NULL )
+                    , pArgu( NULL )
                 {
                     ;
                 }
 
-                BOOLEAN valid()
+                BOOL valid()
                 {
-                    return ( NULL != operate );
+                    return ( NULL != pFunc );
                 }
 
-                ::std::function< void(void*) >            operate;
-                void*                               argument;
+                ::std::function< void(void*) >          pFunc;
+                void*                                   pArgu;
             };
 
         public:
@@ -51,23 +50,23 @@ namespace Base
 
         private:
             void                            innerLoop();
-            PTRTASK                         task();
+            tagTask                         task();
 
             void                            notify();
             void                            broadcast();
 
         private:
-            BOOLEAN                                 m_bStop;
-            BOOLEAN                                 m_bAvailable;
+            BOOLEAN                                     m_bStop;
+            BOOLEAN                                     m_bAvailable;
 
-            UINT                                    m_uiThreadSize;
-            SMUTEX                                  m_threadMutex;
-            SCONDITION                              m_treadCondition;
-            SVECTOR< STHREAD* >                     m_threadVector;
+            UINT                                        m_uiThreadSize;
+            SMUTEX                                      m_threadMutex;
+            SCONDITION                                  m_treadCondition;
+            SVECTOR< STHREAD* >                         m_threadVector;
 
-            UINT                                    m_uiTaskSize;
-            SMUTEX                                  m_taskMutex;
-            SQUEUE< ::std::function< void(void*) > >    m_taskQueue;
+            UINT                                        m_uiTaskSize;
+            SMUTEX                                      m_taskMutex;
+            SQUEUE< tagTask >                           m_taskQueue;
     };
 } //Base
 #endif

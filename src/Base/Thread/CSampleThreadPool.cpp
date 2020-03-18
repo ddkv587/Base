@@ -48,10 +48,12 @@ namespace Base
         }
     }
 
-    BOOLEAN CThreadPool::addTask( PTRTASK t, void* args )
+    BOOLEAN CThreadPool::addTask( PTRTASK t, void* argu )
     {
         if ( m_bAvailable && t )
-            m_taskQueue.emplace( ::std::function< void(void*) >( t ) );
+        {
+            m_taskQueue.emplace( ::std::function< void(void*) >( t ), argu );
+        }
 
         notify();
 
@@ -63,7 +65,7 @@ namespace Base
         while ( !m_bStop ) {
             auto t = task();
             if ( t ) {
-                (*t)( NULL );
+                t.pFunc( t.pArgu );
             } else {
                 ::std::unique_lock<SMUTEX> ulock( m_threadMutex );
                 m_treadCondition.wait( ulock, [this] { return ( m_bStop || ( !m_taskQueue.empty() ) ); } );
@@ -73,7 +75,7 @@ namespace Base
         printf( "thread %lld exit!\n", ::std::this_thread::get_id() );
     } 
     
-    PTRTASK CThreadPool::task()
+    tagTask CThreadPool::task()
     {
         ::std::lock_guard<SMUTEX> lk( m_taskMutex );
 
@@ -81,10 +83,10 @@ namespace Base
             auto t = m_taskQueue.front();
             m_taskQueue.pop();
 
-            return ( *( t.target<void(*)(void*)>() ) );
+            return t;
         }
 
-        return NULL;
+        return tagTask();
     }
 
     void CThreadPool::notify()
