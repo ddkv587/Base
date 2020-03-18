@@ -13,11 +13,11 @@ void task(  void *pData )
 
     ::Base::INT index = 0;
     if ( pData )
-        static_cast< ::Base::INT* >( pData );
+        index = * ( static_cast< ::Base::INT* >( pData ) );
 
     ::std::cout << "thread: " << ::std::this_thread::get_id() << ", index: " << index << ::std::endl;
 
-    std::this_thread::sleep_for(2s);
+    std::this_thread::sleep_for(1s);
 }
 
 int main(int argc, char const *argv[])
