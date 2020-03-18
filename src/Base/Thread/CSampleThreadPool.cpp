@@ -86,7 +86,7 @@ namespace Base
             return t;
         }
 
-        return tagTask( NULL, NULL );
+        return tagTask( );
     }
 
     void CThreadPool::notify()
