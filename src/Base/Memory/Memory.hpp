@@ -5,10 +5,8 @@
  * @Last Modified time: 2020-03-18 17:45:31
  */
 
-#ifndef __BASE_MEMORY_H_INCLUDED__
-#define __BASE_MEMORY_H_INCLUDED__
-
-#include <new>
+#ifndef __BASE_MEMORY_HPP__
+#define __BASE_MEMORY_HPP__
 
 namespace Base
 {
@@ -23,14 +21,15 @@ namespace Base
     private:// embed class or struct or enum
 
     public:// method
-        static void*    malloc( SIZE size, const CHAR* pcClassName = NULL, UINT uiClassID = 0 );
-        static void     free( void* p );
-        static INT      checkPtr( void* p, const CHAR* pcHint = NULL );
-        static UINT     registClassName( const CHAR* pcClassName );
+        static void*    malloc( SIZE size, const STRING& strClassName = STRING_NULL, UINT uiClassID = 0 );
+        static void     free( void* ptr );
+        static INT      checkPtr( void* ptr, const STRING& strHint = STRING_NULL );
+        static UINT     registClassName( const STRING& strClassName );
 
     protected:// method
-        Memory(const Memory&) {}
-        Memory& operator =(const Memory&){return *this;}
+        Memory( Memory& ) = delete;
+        Memory( Memory&& ) = delete;
+        Memory& operator=( Memory&& ) = delete;
 
     private:// method
 

@@ -1,9 +1,9 @@
-/**
-* @attention Copyright
-* Copyright - All Rights Reserved
-* HARMAN Shanghai - HMI Team of Software
-* Email: Feng.Wang@harman.com
-*/
+/*
+ * @Author: ddkV587 
+ * @Date: 2020-03-19 15:09:25 
+ * @Last Modified by:   ddkV587 
+ * @Last Modified time: 2020-03-19 15:09:25 
+ */
 
 #ifndef __BASE_CMEMALLOCATOR_H_INCLUDED__
 #define __BASE_CMEMALLOCATOR_H_INCLUDED__
@@ -79,7 +79,7 @@ namespace BASE
 		UINT			getPoolCount() { return m_uiCurPoolCount; };
 		BOOLEAN			getPoolState(UINT uiIndex, tagMemPoolState& poolState);
 
-		void*			malloc(size_t size);
+		void*			malloc(SIZE size);
 		void			free(void* p);
 
 	protected:
@@ -87,7 +87,7 @@ namespace BASE
 
 	private: // method
 		BOOLEAN			addPoolBlock(tagMemPool* pMemPool);
-		tagMemPool*		findFitPool(size_t size, INT* piIndex = NULL);
+		tagMemPool*		findFitPool(SIZE size, INT* piIndex = NULL);
 		void			freeAllPool();
 
 		void*			allocUnit(tagMemPool* pMemPool);

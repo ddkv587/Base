@@ -1,68 +1,55 @@
 #include "CBase.hpp"
 
-#ifdef OS_QNX
-	#include <malloc.h>
-#endif
-
-#if defined(OS_LINUX) || defined(OS_ANDROID)
-	#include <malloc.h>
-#endif
-
-#ifdef OS_WIN
-#endif
+#include <cstdlib>
 
 namespace Base
 {
-	void* Memory::malloc(size_t size, const CHAR* pcClassName, UINT uiClassID)
-	{
-		CMemManager* pMemManager = CMemManager::getInstance();
+    void* Memory::malloc( SIZE size, const STRING& strClassName, UINT uiClassID )
+    {
+        CMemManager* pMemManager = CMemManager::getInstance();
 
-		if (pMemManager != NULL)
-		{
-			return pMemManager->malloc(size, pcClassName, uiClassID);
-		}
+        if ( pMemManager ) {
+            return pMemManager->malloc( size, strClassName, uiClassID );
+        }
 
-		return ::malloc(size);
-	}
+        return ::malloc( size );
+    }
 
-	void Memory::free(void* p)
-	{
-		if (p == NULL)
-		{
-			return;
-		}
+    void Memory::free( void* ptr )
+    {
+        if ( !ptr )
+        {
+            return;
+        }
 
-		CMemManager* pMemManager = CMemManager::getInstance();
+        CMemManager* pMemManager = CMemManager::getInstance();
 
-		if (pMemManager != NULL)
-		{
-			return pMemManager->free(p);
-		}
+        if ( pMemManager ) {
+            return pMemManager->free( ptr );
+        }
 
-		return ::free(p);
-	}
+        return ::free( ptr );
+    }
 
-	INT Memory::checkPtr(void* p, const CHAR* pcHint)
-	{
-		CMemManager* pMemManager = CMemManager::getInstance();
+    INT Memory::checkPtr( void* ptr, const STRING& strHint )
+    {
+        CMemManager* pMemManager = CMemManager::getInstance();
 
-		if (pMemManager != NULL)
-		{
-			return pMemManager->checkPtr(p);
-		}
+        if ( pMemManager ) {
+            return pMemManager->checkPtr( ptr );
+        }
 
-		return -1;
-	}
+        return -1;
+    }
 
-	UINT Memory::registClassName(const CHAR* pcClassName)
-	{
-		CMemManager* pMemManager = CMemManager::getInstance();
+    UINT Memory::registClassName( const STRING& strClassName )
+    {
+        CMemManager* pMemManager = CMemManager::getInstance();
 
-		if (pMemManager != NULL)
-		{
-			return pMemManager->registClassName(pcClassName);
-		}
+        if ( pMemManager ) {
+            return pMemManager->registClassName( strClassName );
+        }
 
-		return 0;
-	}
+        return 0;
+    }
 }

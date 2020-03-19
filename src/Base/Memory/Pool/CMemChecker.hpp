@@ -1,9 +1,9 @@
-/**
-* @attention Copyright
-* Copyright - All Rights Reserved
-* HARMAN Shanghai - HMI Team of Software
-* Email: Feng.Wang@harman.com
-*/
+/*
+ * @Author: ddkV587 
+ * @Date: 2020-03-19 15:09:18 
+ * @Last Modified by:   ddkV587 
+ * @Last Modified time: 2020-03-19 15:09:18 
+ */
 
 #ifndef __BASE_CMEMCHECKER_H_INCLUDED__
 #define __BASE_CMEMCHECKER_H_INCLUDED__
@@ -51,13 +51,13 @@ namespace BASE
 
 		struct tagBlockStat
 		{
-			size_t			uiBeginSize;
-			size_t			uiEndSize;
+			SIZE			uiBeginSize;
+			SIZE			uiEndSize;
 			LLONG			llAllocTimes;
 			UINT			uiCurrentCount;
-			size_t			uiCurrentSize;
+			SIZE			uiCurrentSize;
 			UINT			uiPeakCount;
-			size_t			uiPeakSize;
+			SIZE			uiPeakSize;
 
 			tagBlockStat()
 				: uiBeginSize(0)
@@ -75,13 +75,13 @@ namespace BASE
 		struct tagThreadSize
 		{
 			UINT		tID;
-			size_t		tSize;
+			SIZE		tSize;
 		};
 
 		struct tagClassStat
 		{
 			UINT			uiInstanceCount;
-			size_t			uiTotalSize;
+			SIZE			uiTotalSize;
 
 			tagClassStat()
 				: uiInstanceCount(0)
@@ -123,7 +123,7 @@ namespace BASE
 			{
 			}
 
-			BOOLEAN writeLine(const CHAR* pcData, INT iStrLen = -1)
+			BOOLEAN writeLine(const STRING& pcData, INT iStrLen = -1)
 			{
 				if (pcData == NULL)
 				{
@@ -163,7 +163,7 @@ namespace BASE
 
 			void writeLine(const String& strData)
 			{
-				writeLine((const CHAR*)strData, (INT)strData.length());
+				writeLine((const STRING&)strData, (INT)strData.length());
 			}
 
 			BOOLEAN hasError()
@@ -190,24 +190,24 @@ namespace BASE
 
 		void			initialize(BOOLEAN bCompactSizeRange, CMemAllocator* pMemAllocator = NULL);
 
-		void*			malloc(size_t size, UINT uiClassID = 0);
+		void*			malloc(SIZE size, UINT uiClassID = 0);
 		void			free(void* p);
-		INT				checkPtr(void* p, const CHAR* pcHint = NULL);
+		INT				checkPtr(void* p, const STRING& pcHint = NULL);
 
-		UINT			registClassName(const CHAR* pcClassName);
+		UINT			registClassName(const STRING& pcClassName);
         void			registThreadName( UINT uiThreadID, const String& strThreadName);
 
 		void			setReportFile(const String& strReportFile);
 		BOOLEAN			outputState(UINT uiGPUMemorySize = 0);
 
 		// =============== get total alloc state =================
-		size_t			getCurrentAllocSize()						{ return m_blockStatAll.uiCurrentSize; }
+		SIZE			getCurrentAllocSize()						{ return m_blockStatAll.uiCurrentSize; }
 		UINT			getCurrentAllocCount()						{ return m_blockStatAll.uiCurrentCount; }
 
 		// =============== get alloc state by thread =================
 		UINT			getThreadCount();
 		UINT			getThreadID( UINT uiIndex );
-		size_t			getThreadSize( UINT uiIndex );
+		SIZE			getThreadSize( UINT uiIndex );
 
 		BOOLEAN			generatePoolConfig(const String& strFileName, UINT uiIncBytes);
 
@@ -217,7 +217,7 @@ namespace BASE
 		void			lock(BOOLEAN bCtrlHook);
 		void			unlock(BOOLEAN bCtrlHook);
 
-		void*			hookMalloc(size_t size, UINT uiClassID);
+		void*			hookMalloc(SIZE size, UINT uiClassID);
 		void			hookFree(void* p);
 
 		EBlockStatus	checkBlock(PBlockHeader pHeader);
@@ -228,9 +228,9 @@ namespace BASE
 		BOOLEAN			outputStateToLogger(CLogger* pLogger, UINT uiGPUMemorySize);
 
 		void			initSizeRange();
-		INT				calcRangeIndex(size_t size);
-		void			logAllocSize(size_t size);
-		void			logFreedSize(size_t size);
+		INT				calcRangeIndex(SIZE size);
+		void			logAllocSize(SIZE size);
+		void			logFreedSize(SIZE size);
 
 		void			buildClassStat(MapThreadStat &mapThreadStat);
 

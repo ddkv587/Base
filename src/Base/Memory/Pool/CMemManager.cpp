@@ -4,8 +4,8 @@
 
 namespace BASE
 {
-    static BOOLEAN		s_bInitialized = FALSE;
-    static CMemManager	g_memManager;
+    static BOOLEAN      s_bInitialized = FALSE;
+    static CMemManager  g_memManager;
 
     CMemManager* CMemManager::getInstance()
     {
@@ -20,10 +20,10 @@ namespace BASE
     }
 
     CMemManager::CMemManager()
-        : m_pListener(NULL)
-        , m_pMemAllocator(NULL)
-        , m_pMemChecker(NULL)
-        , m_bCallbacking(FALSE)
+        : m_pListener( NULL )
+        , m_pMemAllocator( NULL )
+        , m_pMemChecker( NULL )
+        , m_bCallbacking( FALSE )
     {
         initialize();
 
@@ -36,80 +36,65 @@ namespace BASE
 
         s_bInitialized = FALSE;
 
-        if (m_pMemChecker != NULL)
+        if ( m_pMemChecker )
         {
             delete m_pMemChecker;
             m_pMemChecker = NULL;
         }
 
-        if (m_pMemAllocator != NULL)
+        if ( m_pMemAllocator )
         {
             delete m_pMemAllocator;
             m_pMemAllocator = NULL;
         }
     }
 
-    void CMemManager::setListener(IMemListener* pListener)
+    void CMemManager::setListener( IMemListener* pListener )
     {
-        CAutoSync autoSync(m_syncCallback);
+        ::std::unique_lock<SMUTEX> ulock( m_mutexCallback );
         m_pListener = pListener;
     }
 
-    void* CMemManager::malloc(size_t size, const CHAR* pcClassName, UINT uiClassID)
+    void* CMemManager::malloc( SIZE size, const STRING& strClassName, UINT uiClassID )
     {
         void* pRet = NULL;
+
         {
-            if (m_pMemChecker != NULL)
-            {
-                pRet = m_pMemChecker->malloc(size, uiClassID);
-            }
-            else if (m_pMemAllocator != NULL)
-            {
-                pRet = m_pMemAllocator->malloc(size);
-            }
-            else
-            {
-                pRet = ::malloc(size);
+            if ( m_pMemChecker ) {
+                pRet = m_pMemChecker->malloc( size, uiClassID );
+            } else if ( m_pMemAllocator ) {
+                pRet = m_pMemAllocator->malloc( size );
+            } else {
+                pRet = ::malloc( size );
             }
         }
 
-        if (pRet != NULL)
-        {
+        if ( pRet ) {
             return pRet;
         }
 
-        wprintf(L"[Warning][BASE] Out of Memory: Class <%ls> requests %u Bytes, thread_id=%u.\n",
-                pcClassName != NULL ? pcClassName : L"UnregisteredClass or AtomType", size, CThread::getCurrentThreadId());
+        printf( "[Warning][BASE] Out of Memory: Class <%s> requests %u Bytes, thread_id=%u.\n",
+                !strClassName.empty() ? strClassName : L"UnregisteredClass or AtomType", size, ::std::this_thread::get_id() );
 
-        if (m_pListener != NULL && m_bCallbacking == FALSE)
         {
-            CAutoSync autoSync(m_syncCallback);
-
-            if (m_pListener != NULL)
-            {
+            ::std::unique_lock<SMUTEX> ulock( m_mutexCallback );
+            if ( m_pListener && !m_bCallbacking ) {
                 m_bCallbacking = TRUE;
-
-                m_pListener->onOutOfMemory(size);
+                m_pListener->onOutOfMemory( size );
 
                 // Try to alloc again.
                 {
-                    if (m_pMemChecker != NULL)
-                    {
-                        pRet = m_pMemChecker->malloc(size, uiClassID);
-                    }
-                    else if (m_pMemAllocator != NULL)
-                    {
+                    if ( m_pMemChecker ) {
+                        pRet = m_pMemChecker->malloc( size, uiClassID );
+                    } else if ( m_pMemAllocator ) {
                         pRet = m_pMemAllocator->malloc(size);
-                    }
-                    else
-                    {
+                    } else {
                         pRet = ::malloc(size);
                     }
                 }
 
-                if (pRet == NULL)
-                {
-                    wprintf(L"[Warning][BASE] Failed to allocate memory (size: %u Bytes).\n", size);
+                if ( pRet ) {
+                    printf( "[Warning][BASE] Failed to allocate memory (size: %u Bytes).\n", size );
 
                     m_pListener->onMemoryError();
                 }
@@ -121,57 +106,48 @@ namespace BASE
         return pRet;
     }
 
-    void CMemManager::free(void* p)
+    void CMemManager::free( void* ptr )
     {
-        if (m_pMemChecker != NULL)
-        {
-            m_pMemChecker->free(p);
-        }
-        else if (m_pMemAllocator != NULL)
-        {
-            m_pMemAllocator->free(p);
-        }
-        else
-        {
-            ::free(p);
+        if ( m_pMemChecker ) {
+            m_pMemChecker->free( ptr );
+        } else if ( m_pMemAllocator ) {
+            m_pMemAllocator->free( ptr );
+        } else {
+            ::free( ptr );
         }
     }
 
-    INT CMemManager::checkPtr(void* p, const CHAR* pcHint)
+    INT CMemManager::checkPtr(void* p, const STRING& strHint)
     {
-        if (m_pMemChecker != NULL)
-        {
-            return m_pMemChecker->checkPtr(p, pcHint);
+        if ( m_pMemChecker ) {
+            return m_pMemChecker->checkPtr( p, strHint );
         }
 
         return -1;
     }
 
-    UINT CMemManager::registClassName(const CHAR* pcClassName)
+    UINT CMemManager::registClassName( const STRING& strClassName )
     {
-        if (m_pMemChecker != NULL)
-        {
-            return m_pMemChecker->registClassName(pcClassName);
+        if ( m_pMemChecker ) {
+            return m_pMemChecker->registClassName( strClassName );
         }
 
         return 0;
     }
 
-    BOOLEAN CMemManager::outputState(UINT uiGPUMemorySize)
+    BOOLEAN CMemManager::outputState( UINT uiGPUMemorySize )
     {
-        if (m_pMemChecker != NULL)
-        {
-            return m_pMemChecker->outputState(uiGPUMemorySize);
+        if ( m_pMemChecker ) {
+            return m_pMemChecker->outputState( uiGPUMemorySize );
         }
 
         return FALSE;
     }
 
-    BOOLEAN CMemManager::generatePoolConfig(const String& strFileName, UINT uiIncBytes)
+    BOOLEAN CMemManager::generatePoolConfig( const String& strFileName, UINT uiIncBytes )
     {
-        if (m_pMemChecker != NULL)
-        {
-            return m_pMemChecker->generatePoolConfig(strFileName, uiIncBytes);
+        if ( m_pMemChecker ) {
+            return m_pMemChecker->generatePoolConfig( strFileName, uiIncBytes );
         }
 
         return FALSE;
@@ -179,8 +155,7 @@ namespace BASE
 
     void CMemManager::registThreadName( UINT tID, const String& strName )
     {
-        if ( m_pMemChecker )
-        {
+        if ( m_pMemChecker ) {
             m_pMemChecker->registThreadName( tID, strName );
         }
     }

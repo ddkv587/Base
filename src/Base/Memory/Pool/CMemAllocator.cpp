@@ -26,10 +26,10 @@ namespace BASE
 	#define UNIT_NODE_MAGIC								0x837a46c2
 	#define MAKE_UNIT_NODE_MAGIC(ptr_unit_hdr)			(UNIT_NODE_MAGIC ^ (UINT)ptr_unit_hdr)
 
-	#define MEM_ALIGN_BYTE_DEFAULT						((size_t)4U)
-	#define MEM_ALIGN_MASK_DEFAULT						(MEM_ALIGN_BYTE_DEFAULT - (size_t)1U)
+	#define MEM_ALIGN_BYTE_DEFAULT						((SIZE)4U)
+	#define MEM_ALIGN_MASK_DEFAULT						(MEM_ALIGN_BYTE_DEFAULT - (SIZE)1U)
 
-	#define MEM_ALIGN_PAD_SIZE(req_size, align_mask)	((req_size + (size_t)align_mask) & ~(size_t)align_mask)
+	#define MEM_ALIGN_PAD_SIZE(req_size, align_mask)	((req_size + (SIZE)align_mask) & ~(SIZE)align_mask)
 
 	#define PINT_SET_VALUE(ptr_int, ivalue)	\
 		if (ptr_int != NULL) \
@@ -186,7 +186,7 @@ namespace BASE
 		return TRUE;
 	}
 
-	void* CMemAllocator::malloc(size_t size)
+	void* CMemAllocator::malloc(SIZE size)
 	{
 		void* pRet = NULL;
 
@@ -289,7 +289,7 @@ namespace BASE
 		return TRUE;
 	}
 
-	CMemAllocator::tagMemPool* CMemAllocator::findFitPool(size_t size, INT* piIndex)
+	CMemAllocator::tagMemPool* CMemAllocator::findFitPool(SIZE size, INT* piIndex)
 	{
 		if (m_uiCurPoolCount == 0)
 		{
@@ -317,7 +317,7 @@ namespace BASE
 		while(iHigh >= iLow)
 		{
 			iMiddle = (iHigh + iLow) / 2;
-			size_t uiAvailSize = m_pAryMemPool[iMiddle].m_uiUnitAvailSize;
+			SIZE uiAvailSize = m_pAryMemPool[iMiddle].m_uiUnitAvailSize;
 
 			if (size > uiAvailSize)
 			{
