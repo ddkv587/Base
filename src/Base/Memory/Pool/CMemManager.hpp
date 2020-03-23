@@ -1,8 +1,8 @@
 /*
  * @Author: ddkV587 
  * @Date: 2020-03-19 15:09:05 
- * @Last Modified by:   ddkV587 
- * @Last Modified time: 2020-03-19 15:09:05 
+ * @Last Modified by: ddkV587
+ * @Last Modified time: 2020-03-23 17:40:13
  */
 
 #ifndef __BASE_CMEMMANAGER_HPP__
@@ -53,9 +53,9 @@ namespace BASE
         UINT        getThreadID( UINT uiIndex )                 { return m_pMemChecker ? m_pMemChecker->getThreadID( uiIndex ) : 0; }
         SIZE        getThreadSize( UINT uiIndex )               { return m_pMemChecker ? m_pMemChecker->getThreadSize( uiIndex ) : 0; }
 
-        BOOLEAN     generatePoolConfig( const String& strFileName, UINT uiIncBytes );
+        BOOLEAN     generatePoolConfig( const STRING& strFileName, UINT uiIncBytes );
 
-        void        registThreadName( UINT tID, const String& strName );
+        void        registThreadName( UINT tID, const STRING& strName );
 
     protected:// method
         CMemManager( CMemManager& ) = delete;

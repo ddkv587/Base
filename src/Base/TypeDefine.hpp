@@ -2,7 +2,7 @@
  * @Author: ddkV587 
  * @Date: 2020-03-18 17:15:04 
  * @Last Modified by: ddkV587
- * @Last Modified time: 2020-03-23 16:26:35
+ * @Last Modified time: 2020-03-23 17:14:12
  */
 
 #ifndef __BASE_TYPEDEFINE_HPP__
@@ -76,40 +76,6 @@ namespace Base
     #ifndef UNUSED
     #define UNUSED(X)                   (void)(X)
     #endif
-
-    // #ifdef __DEBUG__
-    //     #include <assert.h>
-    //     #define assert_m( x, m )        do { UNUSED( m ); assert( x ); } while(0)
-    //     #define assert_r( x, r )        do { UNUSED( r ); assert( x ); } while(0)
-    //     #define assert_mr( x, m, r )    do { UNUSED( m ); UNUSED( r ); assert( x ); } while(0)
-    
-    // #else
-    //     #define assert( x ) \
-    //                 do {\
-    //                     if ( !( x ) ) \
-    //                         return; \
-    //                 } while(0)       
-    //     #define assert_m( x, m ) \
-    //                 do {\
-    //                     if ( !( x ) ) {\
-    //                         perror( m ); \
-    //                         return; \
-    //                     } \
-    //                 } while(0)
-    //     #define assert_r( x, r ) \
-    //                 do {\
-    //                     if ( !( x ) ) \
-    //                         return ( r ); \
-    //                 } while(0)
-    //     #define assert_mr( x, m, r ) \
-    //                 do {\
-    //                     if ( !( x ) ) {\
-    //                         perror( m ); \
-    //                         return ( r ); \
-    //                     } \
-    //                 } while(0)
-                    
-    // #endif  // __ASSERT__
 }
 
 #endif

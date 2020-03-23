@@ -49,6 +49,7 @@
         "type_traits": "cpp",
         "unordered_map": "cpp",
         "valarray": "cpp",
-        "xhash": "cpp"
+        "xhash": "cpp",
+        "fstream": "cpp"
     }
 }

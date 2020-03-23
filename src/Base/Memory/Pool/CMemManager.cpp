@@ -1,6 +1,7 @@
-#include "CBase.hpp"
-
 #include <malloc.h>
+#include <fstream>
+
+#include "CBase.hpp"
 
 namespace BASE
 {
@@ -162,41 +163,34 @@ namespace BASE
 
     void CMemManager::initialize()
     {
-        CMemoryParser memParser;
+        JSON jMemParser;
+        {
+            ::std::ifstream ifs( "./Memory.json" );
+            if ( !ifs.good() )  return;
 
-        String strPath = CEnvironment::getEnv(ENV_VAR_MEMORY_INI_PATH);
-        if (strPath.length() == 0)
-        {
-            strPath = CPath::getApplicationFolder() + L"Memory.ini";
-        }
-        if (memParser.parse(strPath) == FALSE)
-        {
-            return;
-        }
+            jMemParser = JSON::parse( ifs, nullptr, false );
 
-        if (memParser.getUseAllocator())
-        {
+            if ( !ifs.good() || jMemParser.is_discarded() ) {
+                // TODO : log error when parser memory config
+                return;
+            }
+        }
+        BOOLEAN bAllocator  = jMemParser[ "use_allocator" ].get<::Base::BOOLEAN>();
+        BOOLEAN bMemchecker = jMemParser[ "use_memchecker" ].get<::Base::BOOLEAN>();
+
+        if ( bAllocator ) {
             m_pMemAllocator = new CMemAllocator();
 
-            UINT uiCount = memParser.getPoolConfigSize();
-            m_pMemAllocator->initialize(memParser.getMemAlignByte(), uiCount);
-
-            UINT uiMemCheckExtSize = memParser.getMemoryCheck() ? CMemChecker::getBlockExtSize() : 0;
-
-            for (UINT uiIndex = 0; uiIndex < uiCount; ++uiIndex)
-            {
-                CMemoryParser::tagPoolConfig poolConfig = memParser.getPoolConfigByIndex(uiIndex);
-
-                m_pMemAllocator->createPool(poolConfig.uiUnitSize + uiMemCheckExtSize,
-                                            poolConfig.uiInitCount,
-                                            poolConfig.uiMaxCount,
-                                            poolConfig.uiAppendCount);
+            if ( !m_pMemAllocator->initialize( jMemParser["allocator"], bMemchecker ? CMemChecker::getBlockExtSize() : 0 ) ) {
+                delete m_pMemAllocator;
+                m_pMemAllocator = NULL;
             }
         }
 
-        if (memParser.getMemoryCheck())
+        if ( bMemchecker )
         {
             m_pMemChecker = new CMemChecker();
+
             m_pMemChecker->initialize(memParser.getMemroyCompactSizeRange(), m_pMemAllocator);
             m_pMemChecker->setReportFile(memParser.getMemoryReportFile());
         }
