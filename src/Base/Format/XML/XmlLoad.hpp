@@ -40,10 +40,10 @@ struct tagXMLAttribute
     struct tagXMLAttribute* pNext;  
 };
 
-extern BOOLEAN                  loadXML( const CHAR* strPath, struct tagXMLDocument* pDoc );
+extern BOOLEAN                  loadXML( const STRING& strPath, struct tagXMLDocument* pDoc );
 extern void                     showXML( struct tagXMLDocument* pDoc );
 extern void                     releaseXML( struct tagXMLDocument* pDoc);
-extern struct tagXMLNode*       getNode( const CHAR* strName, struct tagXMLDocument* pDoc );
-extern struct tagXMLNode*       getChildNode( const CHAR* strName, struct tagXMLNode *pNode );
+extern struct tagXMLNode*       getNode( const STRING& strName, struct tagXMLDocument* pDoc );
+extern struct tagXMLNode*       getChildNode( const STRING& strName, struct tagXMLNode *pNode );
 extern struct tagXMLAttribute*  getAttribute( const CHAR *strName, struct tagXMLNode *pNode );
 #endif

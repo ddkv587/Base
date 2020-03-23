@@ -1,5 +1,12 @@
-#ifndef __TYPEDEFINE_HPP__
-#define __TYPEDEFINE_HPP__
+/*
+ * @Author: ddkV587 
+ * @Date: 2020-03-18 17:15:04 
+ * @Last Modified by: ddkV587
+ * @Last Modified time: 2020-03-19 15:22:51
+ */
+
+#ifndef __BASE_TYPEDEFINE_HPP__
+#define __BASE_TYPEDEFINE_HPP__
 
 #include <cstdint>
 #include <string>
@@ -28,14 +35,14 @@ namespace Base
     typedef         bool                            BOOLEAN;
     typedef         float                           FLOAT;
     typedef         double                          DOUBLE;
+    typedef         size_t                          SIZE;
 
     typedef         UINT8                           BYTE;
     typedef         INT64                           LONG;
     typedef         UINT64                          ULONG;
     typedef         INT64                           LLONG;
     typedef         UINT64                          ULLONG;
-    typedef         size_t                          KEY;
-
+    
     typedef         ::std::string                   STRING;
     typedef         ::std::thread                   STHREAD;
     typedef         ::std::mutex                    SMUTEX;
@@ -56,15 +63,17 @@ namespace Base
     #define FALSE                       false
     #endif
 
-    #ifndef STRING_NULL
-    #define STRING_NULL                 ""
-    #endif
-
     #ifndef NULL
     #define NULL                        nullptr
     #endif
 
+    #ifndef STRING_NULL
+    #define STRING_NULL                 ""
+    #endif
+
+    #ifndef UNUSED
     #define UNUSED(X)                   (void)(X)
+    #endif
 
     #ifdef __DEBUG__
         #include <assert.h>
@@ -89,7 +98,7 @@ namespace Base
                     do {\
                         if ( !( x ) ) \
                             return ( r ); \
-                    } while(0)          
+                    } while(0)
         #define assert_mr( x, m, r ) \
                     do {\
                         if ( !( x ) ) {\

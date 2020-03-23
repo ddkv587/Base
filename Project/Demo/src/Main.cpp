@@ -9,23 +9,25 @@ using namespace std::chrono_literals;
 
 void task(  void *pData )
 {
-    //::std::lock_guard< ::std::mutex > guard( s_mutex );
+    ::std::lock_guard< ::std::mutex > guard( s_mutex );
 
-    ::Base::INT index = static_cast< ::Base::INT* >( pData );
+    ::Base::INT index = 0;
+    if ( pData )
+        index = *( static_cast< ::Base::INT* >( pData ) );
 
     ::std::cout << "thread: " << ::std::this_thread::get_id() << ", index: " << index << ::std::endl;
 
-    std::this_thread::sleep_for(2s);
+    //std::this_thread::sleep_for(1s);
 }
 
 int main(int argc, char const *argv[])
 {
-    ::Base::CThreadPool pool( 10, 5 );
+    ::Base::CThreadPool pool( 10, 100 );
 
     pool.start();
 
-    for ( ::Base::INT i=0; i < 5; ++i ) {
-        pool.addTask( task, &i );
+    for ( ::Base::INT i=0; i < 100; ++i ) {
+        pool.addTask( task, new ::Base::INT( i ) );
     }
 
     pool.stop();
