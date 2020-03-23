@@ -2,7 +2,7 @@
  * @Author: ddkV587 
  * @Date: 2020-03-18 17:15:04 
  * @Last Modified by: ddkV587
- * @Last Modified time: 2020-03-19 15:22:51
+ * @Last Modified time: 2020-03-23 16:13:34
  */
 
 #ifndef __BASE_TYPEDEFINE_HPP__
@@ -19,6 +19,8 @@
 #include <thread>
 #include <functional>
 #include <condition_variable>
+
+#include "ThirdLibrary.hpp"
 
 namespace Base
 {
