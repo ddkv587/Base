@@ -48,14 +48,14 @@ int main(int argc, char const *argv[])
     // add another object (using an initializer list of pairs)
     j["object"] = { {"currency", "USD"}, {"value", 42.99} };
     
-    ::std:;cout << "=================" << ::std::endl;
+    ::std::cout << "=================" << ::std::endl;
     ::std::cout << j.dump() << ::std::endl;
 
-    ::std:;cout << "+++++++++++++++++" << ::std::endl;
+    ::std::cout << "+++++++++++++++++" << ::std::endl;
     std::cout << j.dump(4) << std::endl;
 
     ::std::cout << "******************" << ::std::endl;
-    for (json::iterator it = j.begin(); it != j.end(); ++it) {
+    for ( ::Base::JSON::iterator it = j.begin(); it != j.end(); ++it) {
         ::std::cout << *it << ::std::endl;
     }
 
