@@ -72,7 +72,7 @@ int main(int argc, char const *argv[])
     ::std::ifstream ifs( "./Memory.json" );
     ifs >> mem;
         ::std::cout << "######################" << ::std::endl;
-    ::std::cout << mem.dump() << ::std::endl;
+    ::std::cout << mem.dump(4) << ::std::endl;
 
 #if 0
     // sample thread pool
