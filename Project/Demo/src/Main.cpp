@@ -68,8 +68,8 @@ int main(int argc, char const *argv[])
 
 
     ::Base::JSON mem;
-    ::std::ifstream if( "./Memory.ini" );
-    if >> mem;
+    ::std::ifstream ifs( "./Memory.ini" );
+    ifs >> mem;
         ::std::cout << "######################" << ::std::endl;
     ::std::cout << mem.dump() << ::std::endl;
 
