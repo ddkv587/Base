@@ -59,7 +59,7 @@ int main(int argc, char const *argv[])
         ::std::cout << *it << ::std::endl;
     }
 
-    ::std:;cout << "XXXXXXXXXXXXXXXXXXX" << ::std::endl;
+    ::std::cout << "XXXXXXXXXXXXXXXXXXX" << ::std::endl;
     const auto tmp = j[0].get<::Base::FLOAT>();
     ::std::cout << tmp << ::std::endl;
 
