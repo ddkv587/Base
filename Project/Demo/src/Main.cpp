@@ -66,6 +66,13 @@ int main(int argc, char const *argv[])
     const auto tmp2 = j["name"].get<::Base::STRING>();
     ::std::cout << tmp2 << ::std::endl;
 
+
+    ::Base::JSON mem;
+    ::std::ifstream if( "./Memory.ini" );
+    if >> mem;
+        ::std::cout << "######################" << ::std::endl;
+    ::std::cout << mem.dump() << ::std::endl;
+
 #if 0
     // sample thread pool
     ::Base::CThreadPool pool( 10, 100 );
