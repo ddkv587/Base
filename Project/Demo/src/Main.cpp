@@ -60,7 +60,7 @@ int main(int argc, char const *argv[])
     }
 
     ::std::cout << "XXXXXXXXXXXXXXXXXXX" << ::std::endl;
-    const auto tmp = j[0].get<::Base::FLOAT>();
+    const auto tmp = j["pi"].get<::Base::FLOAT>();
     ::std::cout << tmp << ::std::endl;
 
     const auto tmp2 = j["name"].get<::Base::STRING>();
