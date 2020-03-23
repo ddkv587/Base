@@ -60,10 +60,10 @@ int main(int argc, char const *argv[])
     }
 
     ::std:;cout << "XXXXXXXXXXXXXXXXXXX" << ::std::endl;
-    const auto tmp = j[0].get<FLOAT>();
+    const auto tmp = j[0].get<::Base::FLOAT>();
     ::std::cout << tmp << ::std::endl;
 
-    const auto tmp2 = j["name"].get<STRING>();
+    const auto tmp2 = j["name"].get<::Base::STRING>();
     ::std::cout << tmp2 << ::std::endl;
 
 #if 0
