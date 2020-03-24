@@ -90,8 +90,8 @@ namespace Base
                 ;
             }
         };
-        typedef Map<String, tagClassStat, tagStringCompare>     _MapClassStat;
-        typedef Map<UINT, MapClassStat, tagNumCompare<UINT> >   _MapThreadStat;
+        typedef SMAP< STRING, tagClassStat >        _MapClassStat;
+        typedef SMAP< UINT, MapClassStat >          _MapThreadStat;
 
         class CAutoLocker
         {
@@ -109,156 +109,85 @@ namespace Base
             }
 
         private:
-            CMemChecker* m_pMemChecker;
-            BOOLEAN   m_bCtrlHook;
-        };
-
-        class CLogger
-        {
-        public:
-            CLogger(CFile* pFile)
-                : m_pFile( pFile )
-                , m_bHasError( FALSE )
-                , m_uiLineCount( 0 )
-            {
-                ;
-            }
-
-            BOOLEAN writeLine( const STRING& strBuffer, INT iStrLen = -1 )
-            {
-                if ( strBuffer.empty() )
-                {
-                    return TRUE;
-                }
-
-                if (iStrLen < 0)
-                {
-                    iStrLen = String::strlen(pcData);
-                }
-                
-                if (iStrLen == 0)
-                {
-                    return TRUE;
-                }
-
-                ++m_uiLineCount;
-
-                if (m_pFile == NULL)
-                {
-                    String::printf(pcData);
-                    return TRUE;
-                }
-
-                UINT uiDataLen = iStrLen * 2;
-                BYTE* pbtData = new BYTE[uiDataLen];
-                String::convertToBYTE_UTF16(pcData, pbtData, uiDataLen);
-                BOOLEAN bWriteRet = m_pFile->writeData(pbtData, uiDataLen);
-                delete[] pbtData;
-
-                if (!bWriteRet)
-                {
-                    m_bHasError = TRUE;
-                    return FALSE;
-                }
-                return TRUE;
-            }
-
-            void writeLine(const String& strData)
-            {
-                writeLine((const STRING&)strData, (INT)strData.length());
-            }
-
-            BOOLEAN hasError()
-            {
-                return m_bHasError;
-            }
-
-            UINT lineCount()
-            {
-                return m_uiLineCount;
-            }
-
-        private:
-            CFile*      m_pFile;
-            BOOLEAN     m_bHasError;
-            UINT        m_uiLineCount;
+            CMemChecker*    m_pMemChecker;
+            BOOLEAN         m_bCtrlHook;
         };
 
     public:// method
-        static UINT  getBlockExtSize();
+        static UINT         getBlockExtSize();
 
         CMemChecker() ;
         virtual ~CMemChecker();
 
-        void   initialize(BOOLEAN bCompactSizeRange, CMemAllocator* pMemAllocator = NULL);
+        void                initialize(BOOLEAN bCompactSizeRange, CMemAllocator* pMemAllocator = NULL);
 
-        void*   malloc(SIZE size, UINT uiClassID = 0);
-        void   free(void* p);
-        INT    checkPtr(void* p, const STRING& pcHint = NULL);
+        void*               malloc( SIZE size, UINT uiClassID = 0 );
+        void                free( void* p );
+        INT                 checkPtr( void* p, const STRING& pcHint = NULL );
 
-        UINT   registClassName(const STRING& pcClassName);
-        void   registThreadName( UINT uiThreadID, const String& strThreadName);
+        UINT                registClassName( const STRING& pcClassName );
+        void                registThreadName( UINT uiThreadID, const String& strThreadName);
 
-        void   setReportFile(const String& strReportFile);
-        BOOLEAN   outputState(UINT uiGPUMemorySize = 0);
+        void                setReportFile (const String& strReportFile );
+        BOOLEAN             outputState( UINT uiGPUMemorySize = 0 );
 
         // =============== get total alloc state =================
-        SIZE   getCurrentAllocSize()      { return m_blockStatAll.uiCurrentSize; }
-        UINT   getCurrentAllocCount()      { return m_blockStatAll.uiCurrentCount; }
+        SIZE                getCurrentAllocSize()      { return m_blockStatAll.uiCurrentSize; }
+        UINT                getCurrentAllocCount()      { return m_blockStatAll.uiCurrentCount; }
 
         // =============== get alloc state by thread =================
-        UINT   getThreadCount();
-        UINT   getThreadID( UINT uiIndex );
-        SIZE   getThreadSize( UINT uiIndex );
+        UINT                getThreadCount();
+        UINT                getThreadID( UINT uiIndex );
+        SIZE                getThreadSize( UINT uiIndex );
 
-        BOOLEAN   generatePoolConfig(const String& strFileName, UINT uiIncBytes);
+        BOOLEAN             generatePoolConfig( const String& strFileName, UINT uiIncBytes );
 
     protected:
 
     private: // method
-        void   lock(BOOLEAN bCtrlHook);
-        void   unlock(BOOLEAN bCtrlHook);
+        void                lock( BOOLEAN bCtrlHook );
+        void                unlock( BOOLEAN bCtrlHook );
 
-        void*   hookMalloc(SIZE size, UINT uiClassID);
-        void   hookFree(void* p);
+        void*               hookMalloc( SIZE size, UINT uiClassID );
+        void                hookFree( void* p );
 
-        EBlockStatus checkBlock(PBlockHeader pHeader);
-        ELinkStatus  checkAllBlock(UINT &uiErrorBlockCount);
-        void   linkBlock(PBlockHeader pHeader);
-        void   unlinkBlock(PBlockHeader pHeader);
+        EBlockStatus        checkBlock( PBlockHeader pHeader );
+        ELinkStatus         checkAllBlock( UINT &uiErrorBlockCount );
+        void                linkBlock( PBlockHeader pHeader );
+        void                unlinkBlock( PBlockHeader pHeader );
 
-        BOOLEAN   outputStateToLogger(CLogger* pLogger, UINT uiGPUMemorySize);
+       // BOOLEAN     outputStateToLogger( CLogger* pLogger, UINT uiGPUMemorySize );
 
-        void   initSizeRange();
-        INT    calcRangeIndex(SIZE size);
-        void   logAllocSize(SIZE size);
-        void   logFreedSize(SIZE size);
+        void                initSizeRange();
+        INT                 calcRangeIndex( SIZE size );
+        void                logAllocSize( SIZE size );
+        void                logFreedSize( SIZE size );
 
-        void   buildClassStat(MapThreadStat &mapThreadStat);
+        void                buildClassStat( MapThreadStat &mapThreadStat );
 
     public: // property
 
     private:// property
-        CMemAllocator* m_pMemAllocator;
+        CMemAllocator*          m_pMemAllocator;
 
-        String   m_strReportFile;
-        UINT   m_uiReportID;
+        String                  m_strReportFile;
+        UINT                    m_uiReportID;
 
-        PBlockHeader m_pBlockList;
+        PBlockHeader            m_pBlockList;
 
-        BOOLEAN   m_bCompactSizeRange;
-        tagBlockStat m_blockStatAll;
-        tagBlockStat m_blockStatSize[SIZE_INFO_MAX_COUNT];
-        UINT   m_uiBadPtrAccess;
+        BOOLEAN                 m_bCompactSizeRange;
+        tagBlockStat            m_blockStatAll;
+        tagBlockStat            m_blockStatSize[SIZE_INFO_MAX_COUNT];
+        UINT                    m_uiBadPtrAccess;
 
-        CSyncObject  m_syncObject;
-        INT    m_iHookLock;
+        CSyncObject             m_syncObject;
+        INT                     m_iHookLock;
 
-        UINT   m_uiThreadCount;
-        tagThreadSize m_threadSize[SIZE_INFO_MAX_COUNT];
+        UINT                    m_uiThreadCount;
+        tagThreadSize           m_threadSize[SIZE_INFO_MAX_COUNT];
 
-        Map<UINT, String, tagNumCompare<UINT> >  m_mapClassName;
-        Map<UINT, String, tagNumCompare<UINT> >  m_mapThreadName;
+        SMAP<UINT, STRING >     m_mapClassName;
+        SMAP<UINT, STRING >     m_mapThreadName;
     };
 }
 

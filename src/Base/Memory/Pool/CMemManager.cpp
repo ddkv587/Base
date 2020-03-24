@@ -187,12 +187,11 @@ namespace BASE
             }
         }
 
-        if ( bMemchecker )
-        {
+        if ( bMemchecker ) {
             m_pMemChecker = new CMemChecker();
 
-            m_pMemChecker->initialize(memParser.getMemroyCompactSizeRange(), m_pMemAllocator);
-            m_pMemChecker->setReportFile(memParser.getMemoryReportFile());
+            m_pMemChecker->initialize( memParser.getMemroyCompactSizeRange(), m_pMemAllocator );
+            m_pMemChecker->setReportFile( memParser.getMemoryReportFile() );
         }
     }
 }

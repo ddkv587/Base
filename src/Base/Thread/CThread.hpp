@@ -14,7 +14,7 @@ namespace Base
 
     class CThread
     {
-    public:// TODO: define const here
+    public:// define const here
         enum EPolicy
         {
             SCHED_OTHER = 0,
@@ -24,13 +24,13 @@ namespace Base
             SCHED_RR
         };
 
-    private:// TODO: define const here
+    private:// define const here
 
-    public:// TODO: define embed class or struct or enum here
+    public:// define embed class or struct or enum here
 
-    private:// TODO: define embed class or struct or enum here
+    private:// define embed class or struct or enum here
 
-    public:// TODO: define your public method here
+    public:// define your public method here
         CThread();
         virtual ~CThread();
 
@@ -54,13 +54,13 @@ namespace Base
         void                            assignPool( CThreadPool* pool );
         BOOLEAN                         releasePool();
 
-    protected:// TODO: define your protected method here
+    protected:// define your protected method here
         void                            wait()                                          { m_waitCondition.wait_for( ::std::unique_lock<std::mutex>( m_waitMutex ), std::chrono::milliseconds( 2000 ) ); }
         void                            notify()                                        { m_waitCondition.notify_one(); }
 
         virtual void                    mainLoop(void* arg);
 
-    private:// TODO: define your private method here
+    private:// define your private method here
         CThread(CThread&) = delete;
         CThread(const CThread&) = delete;
         CThread& operator=(const CThread&) = delete;
