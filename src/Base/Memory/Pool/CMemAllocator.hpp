@@ -80,7 +80,7 @@ namespace Base
                 m_pFreedLink    = NULL;
             }
 
-            tagMemPool( tagMemPool&& src )
+            void mergeMemPool( tagMemPool& src )
             {
                 if ( ( m_szUnitChunkSize != src.m_szUnitChunkSize ) || ( m_szUnitAvailSize != src.m_szUnitAvailSize ) ) return;
 
@@ -120,11 +120,6 @@ namespace Base
                 }
 
                 src.reset();
-            }
-
-            void mergeMemPool( tagMemPool& src )
-            {
-                *this = ::std::move( src );
             }
 
             void reset()
