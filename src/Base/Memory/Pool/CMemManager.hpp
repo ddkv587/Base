@@ -45,13 +45,13 @@ namespace Base
         BOOLEAN     hasMemChecker()                             { return ( NULL != m_pMemChecker ); }
 
         // =============== get total alloc state =================
-        UINT        getCurrentAllocCount()                      { return m_pMemChecker ? m_pMemChecker->getCurrentAllocCount() : 0; }
-        SIZE        getCurrentAllocSize()                       { return m_pMemChecker ? m_pMemChecker->getCurrentAllocSize() : 0; }
+       // UINT        getCurrentAllocCount()                      { return m_pMemChecker ? m_pMemChecker->getCurrentAllocCount() : 0; }
+        //SIZE        getCurrentAllocSize()                       { return m_pMemChecker ? m_pMemChecker->getCurrentAllocSize() : 0; }
 
         // =============== get alloc state by thread =================
-        UINT        getThreadCount()                            { return m_pMemChecker ? m_pMemChecker->getThreadCount() : 0; }
-        UINT        getThreadID( UINT uiIndex )                 { return m_pMemChecker ? m_pMemChecker->getThreadID( uiIndex ) : 0; }
-        SIZE        getThreadSize( UINT uiIndex )               { return m_pMemChecker ? m_pMemChecker->getThreadSize( uiIndex ) : 0; }
+       // UINT        getThreadCount()                            { return m_pMemChecker ? m_pMemChecker->getThreadCount() : 0; }
+       // UINT        getThreadID( UINT uiIndex )                 { return m_pMemChecker ? m_pMemChecker->getThreadID( uiIndex ) : 0; }
+        //SIZE        getThreadSize( UINT uiIndex )               { return m_pMemChecker ? m_pMemChecker->getThreadSize( uiIndex ) : 0; }
 
         BOOLEAN     generatePoolConfig( const STRING& strFileName, UINT uiIncBytes );
 
