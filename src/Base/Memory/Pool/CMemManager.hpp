@@ -8,7 +8,7 @@
 #ifndef __BASE_CMEMMANAGER_HPP__
 #define __BASE_CMEMMANAGER_HPP__
 
-namespace BASE
+namespace Base
 {
     class CMemManager
     {
@@ -71,7 +71,8 @@ namespace BASE
         IMemListener*               m_pListener;
 
         CMemAllocator*              m_pMemAllocator;
-        CMemChecker*                m_pMemChecker;
+        //CMemChecker*              m_pMemChecker;
+        CMemAllocator*              m_pMemChecker;
 
         SMUTEX                      m_mutexCallback;
         BOOLEAN                     m_bCallbacking;

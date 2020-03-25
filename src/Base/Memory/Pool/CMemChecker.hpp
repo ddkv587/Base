@@ -93,26 +93,6 @@ namespace Base
         typedef SMAP< STRING, tagClassStat >        _MapClassStat;
         typedef SMAP< UINT, MapClassStat >          _MapThreadStat;
 
-        class CAutoLocker
-        {
-        public:
-            CAutoLocker( CMemChecker *pMemChecker, BOOLEAN bCtrlHook )
-                : m_pMemChecker(pMemChecker)
-                , m_bCtrlHook(bCtrlHook)
-            {
-                m_pMemChecker->lock(m_bCtrlHook);
-            }
-
-            virtual ~CAutoLocker()
-            {
-                m_pMemChecker->unlock(m_bCtrlHook);
-            }
-
-        private:
-            CMemChecker*    m_pMemChecker;
-            BOOLEAN         m_bCtrlHook;
-        };
-
     public:// method
         static UINT         getBlockExtSize();
 

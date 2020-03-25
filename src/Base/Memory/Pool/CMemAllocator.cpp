@@ -2,23 +2,23 @@
 
 namespace Base
 {
-    #define SIZE_UNIT_NODE_HEARDER						sizeof(tagUnitNode)
-    #define SIZE_POOL_BLOCK_HEARDER						sizeof(tagPoolBlock)
+    #define SIZE_UNIT_NODE_HEARDER                      sizeof( tagUnitNode )
+    #define SIZE_POOL_BLOCK_HEARDER                     sizeof( tagPoolBlock )
 
-    #define PTR_UNIT_NODE_HEADER(ptr_unit_data)			PUnitNode((BYTE*)ptr_unit_data - SIZE_UNIT_NODE_HEARDER)
-    #define PTR_UNIT_NODE_DATA(ptr_unit_hdr)			(void*)((BYTE*)ptr_unit_hdr + SIZE_UNIT_NODE_HEARDER)
+    #define PTR_UNIT_NODE_HEADER(ptr_unit_data)         PUnitNode((BYTE*)ptr_unit_data - SIZE_UNIT_NODE_HEARDER)
+    #define PTR_UNIT_NODE_DATA(ptr_unit_hdr)            (void*)((BYTE*)ptr_unit_hdr + SIZE_UNIT_NODE_HEARDER)
 
-    #define PTR_POOL_BLOCK_DATA(ptr_hdr, data_offset)	(void*)((BYTE*)ptr_hdr + data_offset)
+    #define PTR_POOL_BLOCK_DATA(ptr_hdr, data_offset)   (void*)((BYTE*)ptr_hdr + data_offset)
 
-    #define UNIT_NODE_MAGIC								0x837a46c2
-    #define MAKE_UNIT_NODE_MAGIC(ptr_unit_hdr)			(UNIT_NODE_MAGIC ^ (UINT)ptr_unit_hdr)
+    #define UNIT_NODE_MAGIC                             0x837a46c2
+    #define MAKE_UNIT_NODE_MAGIC(ptr_unit_hdr)          (UNIT_NODE_MAGIC ^ (UINT)ptr_unit_hdr)
 
-    #define MEM_ALIGN_BYTE_DEFAULT						((SIZE)4U)
-    #define MEM_ALIGN_MASK_DEFAULT						(MEM_ALIGN_BYTE_DEFAULT - (SIZE)1U)
+    #define MEM_ALIGN_BYTE_DEFAULT                      ((SIZE)4U)
+    #define MEM_ALIGN_MASK_DEFAULT                      (MEM_ALIGN_BYTE_DEFAULT - (SIZE)1U)
 
-    #define MEM_ALIGN_PAD_SIZE(req_size, align_mask)	((req_size + (SIZE)align_mask) & ~(SIZE)align_mask)
+    #define MEM_ALIGN_PAD_SIZE(req_size, align_mask)    ((req_size + (SIZE)align_mask) & ~(SIZE)align_mask)
 
-    #define PINT_SET_VALUE(ptr_int, ivalue)	\
+    #define PINT_SET_VALUE(ptr_int, ivalue) \
         if (ptr_int != NULL) \
         { \
             *ptr_int = ivalue; \
@@ -30,19 +30,20 @@ namespace Base
         : m_pAryMemPool(NULL)
         , m_uiMaxPoolCount(0)
         , m_uiCurPoolCount(0)
+        , m_amHookLock( ATOMIC_VAR_INIT( 0 ) )
     {
         m_uiMemAlignMask = MEM_ALIGN_MASK_DEFAULT;
         m_uiBlockDataOffset = MEM_ALIGN_PAD_SIZE(SIZE_POOL_BLOCK_HEARDER + SIZE_UNIT_NODE_HEARDER, m_uiMemAlignMask) - SIZE_UNIT_NODE_HEARDER;
         m_uiSysChunkHdrSize = MEM_ALIGN_PAD_SIZE(SIZE_UNIT_NODE_HEARDER, m_uiMemAlignMask);
 
-        wprintf(L"[Info][BASE] Memory allocator started.\n");
+        printf("[Info][BASE] Memory allocator started.\n");
     }
 
     CMemAllocator::~CMemAllocator()
     {
         freeAllPool();
 
-        wprintf(L"[Info][BASE] Memory allocator exited.\n");
+        printf("[Info][BASE] Memory allocator exited.\n");
     }
 
     BOOLEAN CMemAllocator::initialize( const JSON& jConfig, UINT uiExtSize )
@@ -65,112 +66,67 @@ namespace Base
 
     void CMemAllocator::initialize(UINT uiMemAlignByte, UINT uiMaxPoolCount)
     {
-        if (uiMemAlignByte > 0)
-        {
+        if ( uiMemAlignByte > 0 ) {
             m_uiMemAlignMask = ((uiMemAlignByte + 1) & ~1) - 1;
             m_uiSysChunkHdrSize = MEM_ALIGN_PAD_SIZE(SIZE_UNIT_NODE_HEARDER, m_uiMemAlignMask);
             m_uiBlockDataOffset = MEM_ALIGN_PAD_SIZE(SIZE_POOL_BLOCK_HEARDER + SIZE_UNIT_NODE_HEARDER, m_uiMemAlignMask) - SIZE_UNIT_NODE_HEARDER;
         }
 
-        if (uiMaxPoolCount == 0)
-        {
+        if ( uiMaxPoolCount == 0 ) {
             return;
         }
 
         m_uiMaxPoolCount = uiMaxPoolCount;
-
-        UINT uiMemSize = sizeof(tagMemPool) * m_uiMaxPoolCount;
-        m_pAryMemPool = (tagMemPool*)::malloc(uiMemSize);
-        memset(m_pAryMemPool, 0x0, uiMemSize);
     }
 
-    BOOLEAN CMemAllocator::createPool(UINT uiUnitSize, UINT uiInitCount, UINT uiMaxCount, UINT uiAppendCount)
+    BOOLEAN CMemAllocator::createPool( SIZE szUnitSize, UINT uiInitCount, UINT uiMaxCount, UINT uiAppendCount )
     {
-        if (m_uiCurPoolCount >= m_uiMaxPoolCount)
-        {
+        if ( m_mapMemPool.size() >= m_uiMaxPoolCount ) {
             return FALSE;
         }
 
-        UINT uiUnitChunkSize = MEM_ALIGN_PAD_SIZE(uiUnitSize + SIZE_UNIT_NODE_HEARDER, m_uiMemAlignMask);
-        UINT uiUnitAvailSize = uiUnitChunkSize - SIZE_UNIT_NODE_HEARDER;
-
-        BOOLEAN bCreateNew = TRUE;
-        INT iPoolIndex = -1;
-        PMemPool pMemPool = findFitPool(uiUnitAvailSize, &iPoolIndex);
-
-        if (pMemPool == NULL)
+        SIZE szUnitChunkSize = MEM_ALIGN_PAD_SIZE( szUnitSize + SIZE_UNIT_NODE_HEARDER, m_uiMemAlignMask );
+        SIZE szUnitAvailSize = szUnitChunkSize - SIZE_UNIT_NODE_HEARDER;
         {
-            iPoolIndex = m_uiCurPoolCount;
-        }
-        else // Need insert or merge
-        {
-            if (pMemPool->m_uiUnitAvailSize == uiUnitAvailSize) // Merge
-            {
-                bCreateNew = FALSE;
-                if (pMemPool->m_uiMaxCount != 0)
-                {
-                    pMemPool->m_uiMaxCount += uiMaxCount;
-                    if (pMemPool->m_uiAppendCount < uiAppendCount)
-                    {
-                        pMemPool->m_uiAppendCount = uiAppendCount;
-                    }
-                }
-                wprintf(L"[Warning][BASE] Pool config item was merged to an existing one, (unit_size = %u).\n", uiUnitSize);
+            m_amHookLock.fetch_add( 1, ::std::memory_order_consume );
+
+            auto& it = m_mapMemPool.find( szUnitAvailSize );
+
+            if ( it == m_mapMemPool.end() ) {
+                // insert
+                m_mapMemPool.emplace( szUnitChunkSize, szUnitAvailSize, szUnitSize, uiInitCount, uiMaxCount, uiAppendCount, 0 );
+            } else {
+                // merge
+                auto& pool = it->second;
+                pool.uiMaxCount     = pool.uiMaxCount == 0 ? 0 : pool.uiMaxCount + uiMaxCount;
+                pool.uiAppendCount  = MAX( pool.uiAppendCount, uiAppendCount );
             }
-            else // Insert
-            {
-                // Move array
-                INT iTempIndex = m_uiCurPoolCount - 1;
-                while (iTempIndex >= iPoolIndex)
-                {
-                    memcpy(m_pAryMemPool + iTempIndex + 1, m_pAryMemPool + iTempIndex, sizeof(tagMemPool));
-                    --iTempIndex;
-                }
-            }
-        }
 
-        if (bCreateNew)
-        {
-            m_pAryMemPool[iPoolIndex].m_uiUnitChunkSize	= uiUnitChunkSize;
-            m_pAryMemPool[iPoolIndex].m_uiUnitAvailSize	= uiUnitAvailSize;
-            m_pAryMemPool[iPoolIndex].m_uiInitCount		= uiInitCount;
-            m_pAryMemPool[iPoolIndex].m_uiMaxCount		= uiMaxCount;
-            m_pAryMemPool[iPoolIndex].m_uiAppendCount	= uiAppendCount;
-            m_pAryMemPool[iPoolIndex].m_uiCurrentCount	= 0;
-            m_pAryMemPool[iPoolIndex].m_pFirstBlock		= NULL;
-            m_pAryMemPool[iPoolIndex].m_pFreedLink		= NULL;
-
-            // If we want to initialize the first block for each pool,
-            // Please open the following code.
-            //addPoolBlock(&m_pAryMemPool[m_uiCurPoolCount]);
-
-            m_uiCurPoolCount++;
+            m_amHookLock.fetch_sub( 1, ::std::memory_order_consume );
         }
 
         return TRUE;
     }
 
-    BOOLEAN CMemAllocator::getPoolState(UINT uiIndex, tagMemPoolState& poolState)
+    BOOLEAN CMemAllocator::getPoolState( UINT uiIndex, tagMemPoolState& poolState )
     {
-        if (uiIndex >= m_uiCurPoolCount)
-        {
+        if ( uiIndex >= m_mapMemPool.size() ) {
             return FALSE;
         }
 
-        CAutoSync autoSync(m_syncObject);
+        ::std::lock_guard<SMUTEX> lock( m_syncMutex );
+        
+        auto& it = m_mapMemPool.begin() + uiIndex;
+        PMemPool pMemPool = &( it.second );
 
-        PMemPool pMemPool = m_pAryMemPool + uiIndex;
-
-        poolState.uiUnitAvailSize = pMemPool->m_uiUnitAvailSize;
-        poolState.uiMaxCount = pMemPool->m_uiMaxCount;
-        poolState.uiCurrentCount = pMemPool->m_uiCurrentCount;
+        poolState.uiUnitAvailSize   = pMemPool->m_uiUnitAvailSize;
+        poolState.uiMaxCount        = pMemPool->m_uiMaxCount;
+        poolState.uiCurrentCount    = pMemPool->m_uiCurrentCount;
 
         poolState.uiFreeCount = 0;
-        if (pMemPool->m_uiCurrentCount > 0)
-        {
+        if ( pMemPool->m_uiCurrentCount > 0 ) {
             PUnitNode pUnitNode = pMemPool->m_pFreedLink;
-            while (pUnitNode)
-            {
+            while ( pUnitNode ) {
                 ++poolState.uiFreeCount;
                 pUnitNode = pUnitNode->pNextUnit;
             }
@@ -178,11 +134,9 @@ namespace Base
         }
 
         poolState.uiMemoryCost = 0;
-        if (pMemPool->m_uiCurrentCount > 0)
-        {
+        if ( pMemPool->m_uiCurrentCount > 0 ) {
             PPoolBlock pPoolBlock = pMemPool->m_pFirstBlock;
-            while (pPoolBlock)
-            {
+            while ( pPoolBlock ) {
                 poolState.uiMemoryCost += pPoolBlock->uiBlockSize;
                 pPoolBlock = pPoolBlock->pNextBlock;
             }
@@ -193,154 +147,93 @@ namespace Base
 
     void* CMemAllocator::malloc(SIZE size)
     {
-        void* pRet = NULL;
-
-        PMemPool pMemPool = findFitPool(size);
-        if (pMemPool != NULL)
+        if ( m_amHookLock.fetch_add( 1, ::std::memory_order_acquire ) )
         {
-            pRet = allocUnit(pMemPool);
+            m_amHookLock.fetch_sub( 1, ::std::memory_order_consume );
 
-            if (pRet != NULL)
+            return ::malloc( size );
+        }
+
+        auto& it = m_mapMemPool.lower_bound( size );
+
+        if ( it != m_mapMemPool.end() ) {
+            return allocUnit( &( it->second ) );
+        } else {
+            void* pRet = ::malloc(m_uiSysChunkHdrSize + size);    // make sure memory alignment
+
+            if ( pRet )
             {
-                //wprintf(L"---allocated: 0x%x\n", pRet);
-                return pRet;
+                PUnitNode pUnitNode = PUnitNode( (BYTE*)pRet + m_uiSysChunkHdrSize - SIZE_UNIT_NODE_HEARDER);
+
+                pUnitNode->pMemPool = NULL;
+                pUnitNode->uiMagic  = MAKE_UNIT_NODE_MAGIC(pUnitNode);
+
+                return PTR_UNIT_NODE_DATA(pUnitNode);
             }
         }
-
-        pRet = ::malloc(m_uiSysChunkHdrSize + size); // make sure memory alignment
-
-        if (pRet != NULL)
-        {
-            PUnitNode pUnitNode = PUnitNode((BYTE*)pRet + m_uiSysChunkHdrSize - SIZE_UNIT_NODE_HEARDER);
-
-            pUnitNode->pMemPool = NULL;
-            pUnitNode->uiMagic = MAKE_UNIT_NODE_MAGIC(pUnitNode);
-
-            return PTR_UNIT_NODE_DATA(pUnitNode);
-        }
-
-        return NULL;
     }
 
     void CMemAllocator::free(void* p)
     {
-        tagUnitNode* pUnitNode = PTR_UNIT_NODE_HEADER(p);
+        tagUnitNode* pUnitNode = PTR_UNIT_NODE_HEADER( p );
 
-        if (pUnitNode->uiMagic != MAKE_UNIT_NODE_MAGIC(pUnitNode))
-        {
-            wprintf(L"[Warning][BASE] Free(0x%x): Invalid Pointer, Maybe it had been freed or crashed.\n", p);
+        if ( pUnitNode->uiMagic != MAKE_UNIT_NODE_MAGIC( pUnitNode ) ) {
+            printf("[Warning][BASE] Free(0x%x): Invalid Pointer, Maybe it had been freed or crashed.\n", p);
             return;
         }
 
-        if (pUnitNode->pMemPool != NULL)
-        {
-            CAutoSync autoSync(m_syncObject);
+        if ( pUnitNode->pMemPool ) {
+            ::std::lock_guard<SMUTEX> lock( m_syncMutex );
 
-            pUnitNode->pNextUnit = pUnitNode->pMemPool->m_pFreedLink;
-            pUnitNode->pMemPool->m_pFreedLink = pUnitNode;
-        }
-        else
-        {
-            ::free((BYTE*)p - m_uiSysChunkHdrSize);
+            pUnitNode->pNextUnit                = pUnitNode->pMemPool->m_pFreedLink;
+            pUnitNode->pMemPool->m_pFreedLink   = pUnitNode;
+        } else {
+            ::free( (BYTE*)p - m_uiSysChunkHdrSize );
         }
     }
 
-    BOOLEAN  CMemAllocator::addPoolBlock(tagMemPool* pMemPool)
+    BOOLEAN  CMemAllocator::addPoolBlock( tagMemPool* pMemPool )
     {
-        if ((pMemPool->m_uiMaxCount > 0) &&
-            (pMemPool->m_uiCurrentCount >= pMemPool->m_uiMaxCount))
+        if ( ( pMemPool->m_uiMaxCount > 0 ) && ( pMemPool->m_uiCurrentCount >= pMemPool->m_uiMaxCount ) )
         {
             return FALSE;
         }
 
         UINT uiAddCount = 0;
-        if (pMemPool->m_pFirstBlock == NULL && pMemPool->m_uiInitCount != 0) // Initialize
-        {
+        if ( pMemPool->m_pCurBlock == NULL && pMemPool->m_uiInitCount != 0 ) {
             uiAddCount = pMemPool->m_uiInitCount;
-        }
-        else // Append
-        {
+        } else {
             uiAddCount = pMemPool->m_uiAppendCount;
         }
-        if ((pMemPool->m_uiMaxCount > 0) &&
-            (uiAddCount + pMemPool->m_uiCurrentCount > pMemPool->m_uiMaxCount))
-        {
+
+        if ( ( pMemPool->m_uiMaxCount > 0 ) && ( ( uiAddCount + pMemPool->m_uiCurrentCount ) ) > pMemPool->m_uiMaxCount ) ) {
             uiAddCount = pMemPool->m_uiMaxCount - pMemPool->m_uiCurrentCount;
         }
-        if (uiAddCount == 0)
-        {
-            wprintf(L"[Error][BASE] CMemAllocator::addPoolBlock: Pool(index = %u) config has error, please check Memory.ini.\n",
+
+        if ( 0 == uiAddCount ) {
+            printf("[Error][BASE] CMemAllocator::addPoolBlock: Pool(index = %u) config has error, please check Memory.ini.\n",
                     (m_pAryMemPool - pMemPool) / sizeof(tagMemPool) + 1);
             return FALSE;
         }
 
-        UINT uiBlockSize =	MEM_ALIGN_PAD_SIZE(SIZE_POOL_BLOCK_HEARDER + SIZE_UNIT_NODE_HEARDER, m_uiMemAlignMask)
-                            + pMemPool->m_uiUnitChunkSize * uiAddCount - SIZE_UNIT_NODE_HEARDER;
-        PPoolBlock pPoolBlock = (PPoolBlock)::malloc(uiBlockSize);
-        if (pPoolBlock == NULL)
+        UINT uiBlockSize =	MEM_ALIGN_PAD_SIZE( SIZE_POOL_BLOCK_HEARDER + SIZE_UNIT_NODE_HEARDER, m_uiMemAlignMask )
+                                + pMemPool->m_uiUnitChunkSize * uiAddCount - SIZE_UNIT_NODE_HEARDER;
+        PPoolBlock pPoolBlock = (PPoolBlock)::malloc( uiBlockSize );
+        if ( !pPoolBlock )
         {
-            wprintf(L"[Warning][BASE] Allocate memory pool block failed (size = %u).\n", uiBlockSize);
+            printf("[Warning][BASE] Allocate memory pool block failed (size = %u).\n", uiBlockSize);
             return FALSE;
         }
 
-        pPoolBlock->uiBlockSize = uiBlockSize;
-        pPoolBlock->uiUnitCount = uiAddCount;
-        pPoolBlock->uiUsedCursor = 0;
-        pPoolBlock->pNextBlock = pMemPool->m_pFirstBlock;
+        pPoolBlock->uiBlockSize     = uiBlockSize;
+        pPoolBlock->uiUnitCount     = uiAddCount;
+        pPoolBlock->uiUsedCursor    = 0;
+        pPoolBlock->pNextBlock      = pMemPool->m_pCurBlock;
 
-        pMemPool->m_pFirstBlock = pPoolBlock;
-        pMemPool->m_uiCurrentCount += uiAddCount;
+        pMemPool->m_pCurBlock       = pPoolBlock;
+        pMemPool->m_uiCurrentCount  += uiAddCount;
 
         return TRUE;
-    }
-
-    CMemAllocator::tagMemPool* CMemAllocator::findFitPool(SIZE size, INT* piIndex)
-    {
-        if (m_uiCurPoolCount == 0)
-        {
-            PINT_SET_VALUE(piIndex, -1);
-            return NULL;
-        }
-
-        INT iHigh = m_uiCurPoolCount - 1;
-
-        if (size >= m_pAryMemPool[iHigh].m_uiUnitAvailSize)
-        {
-            if (size == m_pAryMemPool[iHigh].m_uiUnitAvailSize)
-            {
-                PINT_SET_VALUE(piIndex, iHigh);
-                return &m_pAryMemPool[iHigh];
-            }
-
-            PINT_SET_VALUE(piIndex, -1);
-            return NULL;
-        }
-
-        INT iLow = 0;
-        INT iMiddle = m_uiCurPoolCount / 2;
-
-        while(iHigh >= iLow)
-        {
-            iMiddle = (iHigh + iLow) / 2;
-            SIZE uiAvailSize = m_pAryMemPool[iMiddle].m_uiUnitAvailSize;
-
-            if (size > uiAvailSize)
-            {
-                iLow = iMiddle + 1;
-            }
-            else if (size < uiAvailSize)
-            {
-                iHigh = iMiddle - 1;
-            }
-            else // ==
-            {
-                iLow = iMiddle;
-                break;
-            }
-        }
-
-        PINT_SET_VALUE(piIndex, iLow);
-        return &m_pAryMemPool[iLow];
     }
 
     void CMemAllocator::freeAllPool()
@@ -369,38 +262,33 @@ namespace Base
         m_uiMaxPoolCount = 0;
     }
 
-    void* CMemAllocator::allocUnit(tagMemPool* pMemPool)
+    void* CMemAllocator::allocUnit( tagMemPool* pMemPool )
     {
-        CAutoSync autoSync(m_syncObject);
+        ::std::lock_guard<SMUTEX> lock( m_syncMutex );
 
         PUnitNode pUnitNode = pMemPool->m_pFreedLink;
 
-        if (pUnitNode != NULL)
-        {
-            pMemPool->m_pFreedLink = pUnitNode->pNextUnit;
-            pUnitNode->uiMagic = MAKE_UNIT_NODE_MAGIC(pUnitNode);
+        if ( pUnitNode != NULL ) {
+            pMemPool->m_pFreedLink  = pUnitNode->pNextUnit;
+            pUnitNode->uiMagic      = MAKE_UNIT_NODE_MAGIC(pUnitNode);
 
             return PTR_UNIT_NODE_DATA(pUnitNode);
         }
 
-        tagPoolBlock* pPoolBlock = pMemPool->m_pFirstBlock;
+        tagPoolBlock* pPoolBlock = pMemPool->m_pCurBlock;
 
-        if (pPoolBlock == NULL || pPoolBlock->uiUsedCursor >= pPoolBlock->uiUnitCount)
-        {
-            if (addPoolBlock(pMemPool))
-            {
-                pPoolBlock = pMemPool->m_pFirstBlock;
-            }
-            else
-            {
+        if ( !pPoolBlock || pPoolBlock->uiUsedCursor >= pPoolBlock->uiUnitCount) {
+            if ( addPoolBlock( pMemPool ) ) {
+                pPoolBlock = pMemPool->m_pCurBlock;
+            } else {
                 return NULL;
             }
         }
 
-        pUnitNode = PUnitNode((BYTE*)PTR_POOL_BLOCK_DATA(pPoolBlock, m_uiBlockDataOffset) + pMemPool->m_uiUnitChunkSize * pPoolBlock->uiUsedCursor);
+        pUnitNode = PUnitNode( (BYTE*)PTR_POOL_BLOCK_DATA( pPoolBlock, m_uiBlockDataOffset ) + pMemPool->m_uiUnitChunkSize * pPoolBlock->uiUsedCursor );
         pPoolBlock->uiUsedCursor++;
 
-        pUnitNode->uiMagic = MAKE_UNIT_NODE_MAGIC(pUnitNode);
+        pUnitNode->uiMagic  = MAKE_UNIT_NODE_MAGIC(pUnitNode);
         pUnitNode->pMemPool = pMemPool;
 
         return PTR_UNIT_NODE_DATA(pUnitNode);

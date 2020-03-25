@@ -3,7 +3,7 @@
 
 #include "CBase.hpp"
 
-namespace BASE
+namespace Base
 {
     static BOOLEAN      s_bInitialized = FALSE;
     static CMemManager  g_memManager;
@@ -62,7 +62,7 @@ namespace BASE
 
         {
             if ( m_pMemChecker ) {
-                pRet = m_pMemChecker->malloc( size, uiClassID );
+                //pRet = m_pMemChecker->malloc( size, uiClassID );
             } else if ( m_pMemAllocator ) {
                 pRet = m_pMemAllocator->malloc( size );
             } else {
@@ -70,38 +70,9 @@ namespace BASE
             }
         }
 
-        if ( pRet ) {
-            return pRet;
-        }
-
-        printf( "[Warning][BASE] Out of Memory: Class <%s> requests %u Bytes, thread_id=%u.\n",
-                !strClassName.empty() ? strClassName : L"UnregisteredClass or AtomType", size, ::std::this_thread::get_id() );
-
-        {
-            ::std::unique_lock<SMUTEX> ulock( m_mutexCallback );
-            if ( m_pListener && !m_bCallbacking ) {
-                m_bCallbacking = TRUE;
-                m_pListener->onOutOfMemory( size );
-
-                // Try to alloc again.
-                {
-                    if ( m_pMemChecker ) {
-                        pRet = m_pMemChecker->malloc( size, uiClassID );
-                    } else if ( m_pMemAllocator ) {
-                        pRet = m_pMemAllocator->malloc(size);
-                    } else {
-                        pRet = ::malloc(size);
-                    }
-                }
-
-                if ( pRet ) {
-                    printf( "[Warning][BASE] Failed to allocate memory (size: %u Bytes).\n", size );
-
-                    m_pListener->onMemoryError();
-                }
-
-                m_bCallbacking = FALSE;
-            }
+        if ( !pRet ) {
+            printf( "[Warning][BASE] Out of Memory: Class <%s> requests %u Bytes, thread_id=%u.\n",
+                    !strClassName.empty() ? strClassName : L"UnregisteredClass or AtomType", size, ::std::this_thread::get_id() );
         }
 
         return pRet;
@@ -110,7 +81,7 @@ namespace BASE
     void CMemManager::free( void* ptr )
     {
         if ( m_pMemChecker ) {
-            m_pMemChecker->free( ptr );
+            //m_pMemChecker->free( ptr );
         } else if ( m_pMemAllocator ) {
             m_pMemAllocator->free( ptr );
         } else {
@@ -120,45 +91,45 @@ namespace BASE
 
     INT CMemManager::checkPtr(void* p, const STRING& strHint)
     {
-        if ( m_pMemChecker ) {
-            return m_pMemChecker->checkPtr( p, strHint );
-        }
+        // if ( m_pMemChecker ) {
+        //     return m_pMemChecker->checkPtr( p, strHint );
+        // }
 
         return -1;
     }
 
     UINT CMemManager::registClassName( const STRING& strClassName )
     {
-        if ( m_pMemChecker ) {
-            return m_pMemChecker->registClassName( strClassName );
-        }
+        // if ( m_pMemChecker ) {
+        //     return m_pMemChecker->registClassName( strClassName );
+        // }
 
         return 0;
     }
 
     BOOLEAN CMemManager::outputState( UINT uiGPUMemorySize )
     {
-        if ( m_pMemChecker ) {
-            return m_pMemChecker->outputState( uiGPUMemorySize );
-        }
+        // if ( m_pMemChecker ) {
+        //     return m_pMemChecker->outputState( uiGPUMemorySize );
+        // }
 
         return FALSE;
     }
 
     BOOLEAN CMemManager::generatePoolConfig( const String& strFileName, UINT uiIncBytes )
     {
-        if ( m_pMemChecker ) {
-            return m_pMemChecker->generatePoolConfig( strFileName, uiIncBytes );
-        }
+        // if ( m_pMemChecker ) {
+        //     return m_pMemChecker->generatePoolConfig( strFileName, uiIncBytes );
+        // }
 
         return FALSE;
     }
 
     void CMemManager::registThreadName( UINT tID, const String& strName )
     {
-        if ( m_pMemChecker ) {
-            m_pMemChecker->registThreadName( tID, strName );
-        }
+        // if ( m_pMemChecker ) {
+        //     m_pMemChecker->registThreadName( tID, strName );
+        // }
     }
 
     void CMemManager::initialize()
@@ -187,11 +158,12 @@ namespace BASE
             }
         }
 
-        if ( bMemchecker ) {
-            m_pMemChecker = new CMemChecker();
+        // TODO : add mem checker
+        // if ( bMemchecker ) {
+        //     m_pMemChecker = new CMemChecker();
 
-            m_pMemChecker->initialize( memParser.getMemroyCompactSizeRange(), m_pMemAllocator );
-            m_pMemChecker->setReportFile( memParser.getMemoryReportFile() );
-        }
+        //     m_pMemChecker->initialize( memParser.getMemroyCompactSizeRange(), m_pMemAllocator );
+        //     m_pMemChecker->setReportFile( memParser.getMemoryReportFile() );
+        // }
     }
 }

@@ -10,10 +10,18 @@
 
 namespace Base
 {
+    class CMemAllocator;
+    class CMemManager;
+
     class CThreadPool;
 }
 
+#include <atomic>
+
 #include "TypeDefine.hpp"
+
+#include "Memory/Pool/CMemAllocator.hpp"
+#include "Memory/Pool/CMemManager.hpp"
 
 #include "Thread/CSampleThreadPool.hpp"
 
