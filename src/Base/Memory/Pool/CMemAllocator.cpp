@@ -58,7 +58,9 @@ namespace Base
 
         printf("+++++++++++++++++++++\n");
         for ( auto it = jPool.begin(); it != jPool.end(); ++it ) {
-            ::std::cout << it.dump(4) << ::std::endl;
+
+            
+            ::std::cout << (*it).dump(4) << ::std::endl;
 
             if( !createPool( 
                     it["unit_size"].get<UINT>() + uiExtSize,
