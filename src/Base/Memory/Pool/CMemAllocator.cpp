@@ -307,8 +307,6 @@ namespace Base
         pUnitNode->szMagic  = MAKE_UNIT_NODE_MAGIC(pUnitNode);
         pUnitNode->pMemPool = pMemPool;
 
-        printf( "malloc from pool: %lld\n", pUnitNode->szMagic );
-
         return PTR_UNIT_NODE_DATA(pUnitNode);
     }
 }
