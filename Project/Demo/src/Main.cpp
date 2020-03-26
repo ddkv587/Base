@@ -24,6 +24,7 @@ void task(  void *pData )
 
 int main(int argc, char const *argv[])
 {
+    ::Base::CLog::initLog( "./" );
 #if 0
     // json
     // create an empty structure (null)
