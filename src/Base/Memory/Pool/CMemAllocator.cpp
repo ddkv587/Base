@@ -288,8 +288,6 @@ namespace Base
             pMemPool->m_pFreedLink  = pUnitNode->pNextUnit;
             pUnitNode->szMagic      = MAKE_UNIT_NODE_MAGIC(pUnitNode);
 
-            printf( "malloc from free link : %lld\n", pUnitNode->szMagic );
-
             return PTR_UNIT_NODE_DATA(pUnitNode);
         }
 

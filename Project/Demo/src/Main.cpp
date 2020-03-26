@@ -92,7 +92,10 @@ int main(int argc, char const *argv[])
 #endif
 
     new ::Base::INT(10);
+    new ::Base::CHAR('c');
     new ::Base::INT[10];
+
+
 
     return 0;
 }
