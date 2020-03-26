@@ -19,6 +19,6 @@ jobs:
         ./auto-build.sh
     - name: Run tests
       run:
-        cd Project/Demo/target
-        cp ../../doc/Memory.json .
+        cd Project/Demo/target &&
+        cp ../../doc/Memory.json . &&
         ./Demo
