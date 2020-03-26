@@ -9,7 +9,7 @@ namespace Base
 {
     void CLog::initLog( const STRING& strName )
     {
-        ::google::InitGoogleLogging( strName );
+        ::google::InitGoogleLogging( strName.c_str() );
         FLAGS_log_dir           = "/tmp/log";
         FLAGS_alsologtostderr   = true;
         FLAGS_colorlogtostderr  = true;
