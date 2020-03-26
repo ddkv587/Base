@@ -208,7 +208,7 @@ namespace Base
             uiAddCount = pMemPool->m_uiAppendCount;
         }
 
-        if ( ( pMemPool->m_uiMaxCount > 0 ) && ( ( uiAddCount + pMemPool->m_uiCurrentCount ) ) > pMemPool->m_uiMaxCount ) ) {
+        if ( ( pMemPool->m_uiMaxCount > 0 ) && ( ( uiAddCount + pMemPool->m_uiCurrentCount ) > pMemPool->m_uiMaxCount ) ) {
             uiAddCount = pMemPool->m_uiMaxCount - pMemPool->m_uiCurrentCount;
         }
 
