@@ -24,7 +24,7 @@ namespace Base
 
 #include "Memory/Pool/CMemAllocator.hpp"
 #include "Memory/Pool/CMemManager.hpp"
-#include "Memory/Memory.hpp
+#include "Memory/Memory.hpp"
 
 #include "Thread/CSampleThreadPool.hpp"
 
