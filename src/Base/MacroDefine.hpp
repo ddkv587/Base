@@ -12,11 +12,11 @@
 
 // ================= memory =================
 #define MEMORY_CONTROL \
-    void* operator new( SIZE size ) \
+    void* operator new( size_t size ) \
     { \
         return ::Base::Memory::malloc(size); \
     } \
-    void* operator new[]( SIZE size ) \
+    void* operator new[]( size_t size ) \
     { \
         return ::Base::Memory::malloc( size ); \
     } \
@@ -30,7 +30,7 @@
     }
 
 #define IMP_OPERATOR_NEW( ClassName ) \
-    void* operator new( SIZE size ) \
+    void* operator new( size_t size ) \
     { \
         static INT s_uiClassID = 0; \
         if ( s_uiClassID == 0 ) \
@@ -39,7 +39,7 @@
         } \
         return ::Base::Memory::malloc( size, ClassName, s_uiClassID ); \
     } \
-    void* operator new[]( SIZE size ) \
+    void* operator new[]( size_t size ) \
     { \
         static INT s_uiClassID = 0; \
         if ( s_uiClassID == 0 ) \
