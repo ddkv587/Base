@@ -24,7 +24,7 @@ void task(  void *pData )
 
 int main(int argc, char const *argv[])
 {
-
+#if 0
     // json
     // create an empty structure (null)
     ::Base::JSON j;
@@ -74,6 +74,7 @@ int main(int argc, char const *argv[])
     ifs >> mem;
         ::std::cout << "######################" << ::std::endl;
     ::std::cout << mem.dump(4) << ::std::endl;
+#endif
 
 #if 0
     // sample thread pool
@@ -89,6 +90,9 @@ int main(int argc, char const *argv[])
 
     getchar();
 #endif
+
+    new ::Base::INT(10);
+    new ::Base::INT[10];
 
     return 0;
 }

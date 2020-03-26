@@ -151,8 +151,7 @@ namespace Base
 
     void* CMemAllocator::malloc(SIZE size)
     {
-        if ( m_amHookLock.fetch_add( 1, ::std::memory_order_acquire ) )
-        {
+        if ( m_amHookLock.fetch_add( 1, ::std::memory_order_acquire ) ) {
             m_amHookLock.fetch_sub( 1, ::std::memory_order_consume );
 
             return ::malloc( size );
@@ -276,6 +275,8 @@ namespace Base
             pMemPool->m_pFreedLink  = pUnitNode->pNextUnit;
             pUnitNode->szMagic      = MAKE_UNIT_NODE_MAGIC(pUnitNode);
 
+            printf( "malloc from free link : %lld\n", pUnitNode->szMagic );
+
             return PTR_UNIT_NODE_DATA(pUnitNode);
         }
 
@@ -294,6 +295,8 @@ namespace Base
 
         pUnitNode->szMagic  = MAKE_UNIT_NODE_MAGIC(pUnitNode);
         pUnitNode->pMemPool = pMemPool;
+
+        printf( "malloc from pool: %lld\n", pUnitNode->szMagic );
 
         return PTR_UNIT_NODE_DATA(pUnitNode);
     }
