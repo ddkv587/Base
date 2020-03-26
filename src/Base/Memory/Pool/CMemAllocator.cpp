@@ -182,6 +182,8 @@ namespace Base
                 return PTR_UNIT_NODE_DATA(pUnitNode);
             }
         }
+
+        return NULL;
     }
 
     void CMemAllocator::free(void* p)
