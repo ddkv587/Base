@@ -58,15 +58,13 @@ namespace Base
 
         printf("+++++++++++++++++++++\n");
         for ( auto it = jPool.begin(); it != jPool.end(); ++it ) {
-
             
-            ::std::cout << (*it).dump(4) << ::std::endl;
-
+            auto& subPool = (*it);
             if( !createPool( 
-                    it["unit_size"].get<UINT>() + uiExtSize,
-                    it["init_count"].get<UINT>(),
-                    it["max_count"].get<UINT>(),
-                    it["append_count"].get<UINT>() ) ) {
+                    subPool["unit_size"].get<UINT>() + uiExtSize,
+                    subPool["init_count"].get<UINT>(),
+                    subPool["max_count"].get<UINT>(),
+                    subPool["append_count"].get<UINT>() ) ) {
                 return FALSE;
             }
         }
