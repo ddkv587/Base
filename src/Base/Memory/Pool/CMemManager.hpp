@@ -17,13 +17,7 @@ namespace Base
     private:// const define
 
     public:// embed class or struct or enum
-        class IMemListener
-        {
-        public:
-            virtual void    onOutOfMemory( UINT uiSize ) = 0;
-            virtual void    onMemoryError() = 0;
-        };
-
+    
     private:// embed class or struct or enum
 
     public:// method
