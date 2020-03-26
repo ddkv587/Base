@@ -1,5 +1,4 @@
 #include <stdarg.h>
-#include <glog/logging.h>
 #include <sys/stat.h>
 #include <sys/types.h>
 #include <dirent.h>
@@ -51,16 +50,16 @@ namespace Base
     std::string CLog::format( const STRING& fmt, ... ) 
     {
         INT iSize   = 512;
-        CHAR* buff  = ( CHAR* )malloc( size );
+        CHAR* buff  = ( CHAR* )malloc( iSize );
         
         va_list v1;
         va_start(v1, fmt);
-        INT nsize = vsnprintf( buff, size, fmt, v1 );
-        if ( size <= nsize ) {
+        INT nsize = vsnprintf( buff, iSize, fmt, v1 );
+        if ( iSize <= nsize ) {
             // realloc
             free( buff );
             buff    = ( CHAR* )malloc( nsize + 1 );
-            nsize   = vsnprintf( buff, size, fmt, v1 );
+            nsize   = vsnprintf( buff, iSize, fmt, v1 );
         }
         std::string ret( buff );
         va_end(v1);
@@ -71,12 +70,12 @@ namespace Base
 
     BOOLEAN CLog::checkDirection( const STRING& strPath )
     {
-        DIR* dir = opendir( strPath );
+        DIR* dir = opendir( strPath.c_str() );
         if ( dir ) {
             closedir( dir );
             return TRUE;
         } else if ( ENOENT == errno ) {
-            return ( 0 == mkdir( strPath, 0774 ) );
+            return ( 0 == mkdir( strPath.c_str(), 0774 ) );
         } else {
             return FALSE;
         }
