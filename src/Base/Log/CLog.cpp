@@ -29,7 +29,7 @@ namespace Base
     {
         if ( !checkDirection( strPath ) ) return;
 
-        ::google::SetLogDestination( level, strPath );
+        ::google::SetLogDestination( level, strPath.c_str() );
     }
 
     void CLog::setFilter( LOG_LEVEL level )
