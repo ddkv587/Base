@@ -72,7 +72,7 @@ namespace Base
             }
         }
 
-        LOG(INFO) << "thread " 
+        ::LOG(INFO) << "thread " 
                     << ::std::this_thread::get_id() 
                     << " exit!\n";
     } 
