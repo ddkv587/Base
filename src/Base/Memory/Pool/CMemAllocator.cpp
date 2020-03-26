@@ -55,7 +55,11 @@ namespace Base
         ::std::cout << jPool.dump(4) << ::std::endl;
 
         initialize( jConfig["memory_align_byte"].get<UINT>(), jPool.size() );
+
+        printf("+++++++++++++++++++++\n");
         for ( auto it = jPool.begin(); it != jPool.end(); ++it ) {
+            ::std::cout << it.dump(4) << ::std::endl;
+
             if( !createPool( 
                     it["unit_size"].get<UINT>() + uiExtSize,
                     it["init_count"].get<UINT>(),
