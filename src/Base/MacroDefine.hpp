@@ -28,14 +28,14 @@
     { \
         ::Base::Memory::free( p ); \
     }
-
+/*
 #define IMP_OPERATOR_NEW( ClassName ) \
     void* operator new( size_t size ) \
     { \
         static INT s_uiClassID = 0; \
         if ( s_uiClassID == 0 ) \
         { \
-            s_uiClassID = ::Base::Memory::registClassName( ClassName ); \
+            //s_uiClassID = ::Base::Memory::registClassName( ClassName );
         } \
         return ::Base::Memory::malloc( ::Base::SIZE( size ), ClassName, s_uiClassID ); \
     } \
@@ -48,7 +48,6 @@
         } \
         return ::Base::Memory::malloc( ::Base::SIZE( size ), ClassName, s_uiClassID ); \
     }
-    /*
     //void operator delete(void* p) \
     //{ \
     //	static INT s_uiClassID = 0; \
@@ -67,7 +66,7 @@
     //	} \
     //	return ::Base::Memory::delete( p, ClassName, s_uiClassID ); \
     //}
-    */
+*/
 
 #define CHECK_OBJECT_PTR( ObjPtr, Hint ) \
     { \
