@@ -19,7 +19,7 @@ namespace Base
     public:// embed class or struct or enum
         struct tagMemPoolState
         {
-            UINT    uiUnitAvailSize;
+            SIZE    szUnitAvailSize;
             UINT    uiMaxCount;
             UINT    uiCurrentCount;
             UINT    uiFreeCount;

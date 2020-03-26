@@ -90,14 +90,14 @@ namespace Base
         {
             m_amHookLock.fetch_add( 1, ::std::memory_order_consume );
 
-            auto& it = m_mapMemPool.find( szUnitAvailSize );
+            auto it = m_mapMemPool.find( szUnitAvailSize );
 
             if ( it == m_mapMemPool.end() ) {
                 // insert
                 m_mapMemPool.emplace( szUnitChunkSize, szUnitAvailSize, szUnitSize, uiInitCount, uiMaxCount, uiAppendCount, 0 );
             } else {
                 // merge
-                auto& pool = it->second;
+                auto pool = it->second;
                 pool.m_uiMaxCount     = pool.m_uiMaxCount == 0 ? 0 : pool.m_uiMaxCount + uiMaxCount;
                 pool.m_uiAppendCount  = MAX( pool.m_uiAppendCount, uiAppendCount );
             }
@@ -119,9 +119,9 @@ namespace Base
         auto it = m_mapMemPool.begin();
         ::std::advance( it, uiIndex );
 
-        PMemPool pMemPool = &( it.second );
+        PMemPool pMemPool = &( it->second );
 
-        poolState.uiUnitAvailSize   = pMemPool->m_uiUnitAvailSize;
+        poolState.szUnitAvailSize   = pMemPool->m_szUnitAvailSize;
         poolState.uiMaxCount        = pMemPool->m_uiMaxCount;
         poolState.uiCurrentCount    = pMemPool->m_uiCurrentCount;
 
@@ -132,14 +132,14 @@ namespace Base
                 ++poolState.uiFreeCount;
                 pUnitNode = pUnitNode->pNextUnit;
             }
-            poolState.uiFreeCount += (pMemPool->m_pFirstBlock->uiUnitCount - pMemPool->m_pFirstBlock->uiUsedCursor);
+            poolState.uiFreeCount += (pMemPool->m_pCurBlock->uiUnitCount - pMemPool->m_pCurBlock->uiUsedCursor);
         }
 
-        poolState.uiMemoryCost = 0;
+        poolState.szMemoryCost = 0;
         if ( pMemPool->m_uiCurrentCount > 0 ) {
-            PPoolBlock pPoolBlock = pMemPool->m_pFirstBlock;
+            PPoolBlock pPoolBlock = pMemPool->m_pCurBlock;
             while ( pPoolBlock ) {
-                poolState.uiMemoryCost += pPoolBlock->uiBlockSize;
+                poolState.szMemoryCost += pPoolBlock->uiBlockSize;
                 pPoolBlock = pPoolBlock->pNextBlock;
             }
         }
@@ -156,7 +156,7 @@ namespace Base
             return ::malloc( size );
         }
 
-        auto& it = m_mapMemPool.lower_bound( size );
+        auto it = m_mapMemPool.lower_bound( size );
 
         if ( it != m_mapMemPool.end() ) {
             return allocUnit( &( it->second ) );
