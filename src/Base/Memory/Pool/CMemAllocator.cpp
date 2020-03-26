@@ -94,7 +94,9 @@ namespace Base
 
             if ( it == m_mapMemPool.end() ) {
                 // insert
-                m_mapMemPool.emplace( szUnitAvailSize, szUnitChunkSize, szUnitAvailSize, uiInitCount, uiMaxCount, uiAppendCount, 0 );
+                m_mapMemPool.emplace( ::std::piecewise_construct,
+                                        std::forward_as_tuple( szUnitAvailSize ),
+                                        std::forward_as_tuple( szUnitChunkSize, szUnitAvailSize, uiInitCount, uiMaxCount, uiAppendCount, 0 ) );
             } else {
                 // merge
                 auto pool = it->second;
