@@ -51,7 +51,7 @@ namespace Base
         auto jPool = jConfig["pool"];
 
         initialize( jConfig["memory_align_byte"].get<UINT>(), jPool.size() );
-        for ( auto it = jPool.begin(), it != jPool.end(); ++it ) {
+        for ( auto it = jPool.begin(); it != jPool.end(); ++it ) {
             if( !createPool( 
                     it["unit_size"].get<UINT>() + uiExtSize,
                     it["init_count"].get<UINT>(),
@@ -98,8 +98,8 @@ namespace Base
             } else {
                 // merge
                 auto& pool = it->second;
-                pool.uiMaxCount     = pool.uiMaxCount == 0 ? 0 : pool.uiMaxCount + uiMaxCount;
-                pool.uiAppendCount  = MAX( pool.uiAppendCount, uiAppendCount );
+                pool.m_uiMaxCount     = pool.m_uiMaxCount == 0 ? 0 : pool.m_uiMaxCount + uiMaxCount;
+                pool.m_uiAppendCount  = MAX( pool.m_uiAppendCount, uiAppendCount );
             }
 
             m_amHookLock.fetch_sub( 1, ::std::memory_order_consume );
@@ -116,7 +116,9 @@ namespace Base
 
         ::std::lock_guard<SMUTEX> lock( m_syncMutex );
         
-        auto& it = m_mapMemPool.begin() + uiIndex;
+        auto it = m_mapMemPool.begin();
+        ::std::advance( it, uiIndex );
+
         PMemPool pMemPool = &( it.second );
 
         poolState.uiUnitAvailSize   = pMemPool->m_uiUnitAvailSize;
