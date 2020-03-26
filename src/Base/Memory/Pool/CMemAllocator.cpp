@@ -164,7 +164,10 @@ namespace Base
         auto it = m_mapMemPool.lower_bound( size );
 
         if ( it != m_mapMemPool.end() ) {
-            return allocUnit( &( it->second ) );
+            void* ptr = allocUnit( &( it->second ) );
+
+            printf("[Info][BASE] CMemAllocator malloc size from pool: %lld, magic: %lld\n", size, ( (PUnitNode) PTR_UNIT_NODE_HEADER( ptr ) )->szMagic );
+            return ptr;
         } else {
             void* pRet = ::malloc(m_uiSysChunkHdrSize + size);    // make sure memory alignment
 
@@ -174,6 +177,9 @@ namespace Base
 
                 pUnitNode->pMemPool = NULL;
                 pUnitNode->szMagic  = MAKE_UNIT_NODE_MAGIC(pUnitNode);
+
+                printf("[Info][BASE] CMemAllocator malloc size: %lld, magic: %lld\n", size, szMagic );
+            
 
                 return PTR_UNIT_NODE_DATA(pUnitNode);
             }
@@ -192,9 +198,13 @@ namespace Base
         if ( pUnitNode->pMemPool ) {
             ::std::lock_guard<SMUTEX> lock( m_syncMutex );
 
+            printf("[Info][BASE] CMemAllocator free size to free link: %lld, magic: %lld\n", size, pUnitNode->szMagic );
+
             pUnitNode->pNextUnit                = pUnitNode->pMemPool->m_pFreedLink;
             pUnitNode->pMemPool->m_pFreedLink   = pUnitNode;
         } else {
+            printf("[Info][BASE] CMemAllocator free size: %lld, magic: %lld\n", size, pUnitNode->szMagic );
+
             ::free( (BYTE*)p - m_uiSysChunkHdrSize );
         }
     }
