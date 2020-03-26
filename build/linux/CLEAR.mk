@@ -5,7 +5,7 @@ STRIP              := strip
 TARGET_ARCH        := 
 CFLAGS             := -Wall -c -fmessage-length=0 -MMD -MP $(PLATFORM_MACRO) -fpermissive -O0 -g3
 CFLAGS_DEBUG       := -Wall -c -fmessage-length=0 -MMD -MP $(PLATFORM_MACRO) -fpermissive -O0 -g3
-LIBS               := -lm -lstdc++
+LIBS               := -lm -lstdc++ -lglog
 LIBS_DIR           := 
 LIBS_DIR_DEBUG     := 
 APP_NAME           :=

@@ -95,7 +95,5 @@ int main(int argc, char const *argv[])
     new ::Base::CHAR('c');
     new ::Base::INT[10];
 
-
-
     return 0;
 }

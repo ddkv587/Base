@@ -72,7 +72,7 @@ namespace Base
             }
         }
 
-        printf( "thread %lld exit!\n", ::std::this_thread::get_id() );
+        ::std::cout << "thread " << ::std::this_thread::get_id() << " exit!\n";
     } 
     
     CThreadPool::tagTask CThreadPool::task()
