@@ -166,7 +166,7 @@ namespace Base
         if ( it != m_mapMemPool.end() ) {
             void* ptr = allocUnit( &( it->second ) );
 
-            printf("[Info][BASE] CMemAllocator malloc from pool, size: %lld, ptr: %p, magic: %lld\n", size, PTR_UNIT_NODE_DATA(pUnitNode), ( (PUnitNode) PTR_UNIT_NODE_HEADER( ptr ) )->szMagic );
+            printf("[Info][BASE] CMemAllocator malloc from pool, size: %lld, ptr: %p, magic: %lld\n", size, ptr, ( (PUnitNode) PTR_UNIT_NODE_HEADER( ptr ) )->szMagic );
             return ptr;
         } else {
             void* pRet = ::malloc(m_uiSysChunkHdrSize + size);    // make sure memory alignment
@@ -179,7 +179,6 @@ namespace Base
                 pUnitNode->szMagic  = MAKE_UNIT_NODE_MAGIC(pUnitNode);
 
                 printf("[Info][BASE] CMemAllocator malloc, size: %lld, ptr: %p, magic: %lld\n", size, PTR_UNIT_NODE_DATA(pUnitNode), pUnitNode->szMagic );
-            
 
                 return PTR_UNIT_NODE_DATA(pUnitNode);
             }
