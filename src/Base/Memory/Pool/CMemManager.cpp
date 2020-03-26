@@ -21,8 +21,7 @@ namespace Base
     }
 
     CMemManager::CMemManager()
-        : m_pListener( NULL )
-        , m_pMemAllocator( NULL )
+        : m_pMemAllocator( NULL )
         , m_pMemChecker( NULL )
         , m_bCallbacking( FALSE )
     {
@@ -48,12 +47,6 @@ namespace Base
             delete m_pMemAllocator;
             m_pMemAllocator = NULL;
         }
-    }
-
-    void CMemManager::setListener( IMemListener* pListener )
-    {
-        ::std::unique_lock<SMUTEX> ulock( m_mutexCallback );
-        m_pListener = pListener;
     }
 
     void* CMemManager::malloc( SIZE size, const STRING& strClassName, UINT uiClassID )

@@ -17,7 +17,7 @@ namespace Base
     private:// const define
 
     public:// embed class or struct or enum
-    
+
     private:// embed class or struct or enum
 
     public:// method
@@ -26,8 +26,6 @@ namespace Base
         // inner method
         CMemManager();
         virtual ~CMemManager();
-
-        void        setListener(IMemListener* pListener);
 
         void*       malloc( SIZE size, const STRING& strClassName = STRING_NULL, UINT uiClassID = 0 );
         void        free(void* p);
@@ -62,8 +60,6 @@ namespace Base
     protected:// property
 
     private:// property
-        IMemListener*               m_pListener;
-
         CMemAllocator*              m_pMemAllocator;
         //CMemChecker*              m_pMemChecker;
         CMemAllocator*              m_pMemChecker;
