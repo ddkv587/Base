@@ -65,7 +65,7 @@ namespace Base
 
         if ( !pRet ) {
             printf( "[Warning][BASE] Out of Memory: Class <%s> requests %u Bytes, thread_id=%u.\n",
-                    !strClassName.empty() ? strClassName : L"UnregisteredClass or AtomType", size, ::std::this_thread::get_id() );
+                    !strClassName.empty() ? strClassName : "UnregisteredClass or AtomType", size, ::std::this_thread::get_id() );
         }
 
         return pRet;
