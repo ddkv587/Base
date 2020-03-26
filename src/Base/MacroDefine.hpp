@@ -14,11 +14,11 @@
 #define MEMORY_CONTROL \
     void* operator new( size_t size ) \
     { \
-        return ::Base::Memory::malloc(size); \
+        return ::Base::Memory::malloc( ::Base::SIZE( size ) ); \
     } \
     void* operator new[]( size_t size ) \
     { \
-        return ::Base::Memory::malloc( size ); \
+        return ::Base::Memory::malloc( ::Base::SIZE( size ) ); \
     } \
     void operator delete[]( void* p ) \
     { \
@@ -37,7 +37,7 @@
         { \
             s_uiClassID = ::Base::Memory::registClassName( ClassName ); \
         } \
-        return ::Base::Memory::malloc( size, ClassName, s_uiClassID ); \
+        return ::Base::Memory::malloc( ::Base::SIZE( size ), ClassName, s_uiClassID ); \
     } \
     void* operator new[]( size_t size ) \
     { \
@@ -46,7 +46,7 @@
         { \
             s_uiClassID = ::Base::Memory::registClassName( ClassName ); \
         } \
-        return ::Base::Memory::malloc( size, ClassName, s_uiClassID ); \
+        return ::Base::Memory::malloc( ::Base::SIZE( size ), ClassName, s_uiClassID ); \
     }
     /*
     //void operator delete(void* p) \
