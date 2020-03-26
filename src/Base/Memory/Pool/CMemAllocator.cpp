@@ -178,7 +178,7 @@ namespace Base
                 pUnitNode->pMemPool = NULL;
                 pUnitNode->szMagic  = MAKE_UNIT_NODE_MAGIC(pUnitNode);
 
-                printf("[Info][BASE] CMemAllocator malloc, size: %lld, ptr: %p, magic: %lld\n", size, PTR_UNIT_NODE_DATA(pUnitNode), szMagic );
+                printf("[Info][BASE] CMemAllocator malloc, size: %lld, ptr: %p, magic: %lld\n", size, PTR_UNIT_NODE_DATA(pUnitNode), pUnitNode->szMagic );
             
 
                 return PTR_UNIT_NODE_DATA(pUnitNode);
