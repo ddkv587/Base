@@ -136,6 +136,8 @@ namespace Base
 
             if ( !ifs.good() || jMemParser.is_discarded() ) {
                 // TODO : log error when parser memory config
+                printf( "[Error][BASE] memory config parser error \n" );
+
                 return;
             }
         }
