@@ -2,7 +2,7 @@
  * @Author: ddkV587 
  * @Date: 2020-03-19 15:09:25 
  * @Last Modified by: ddkV587
- * @Last Modified time: 2020-03-23 18:23:37
+ * @Last Modified time: 2020-03-26 16:59:32
  */
 
 #ifndef __BASE_CMEMALLOCATOR_HPP__
@@ -80,61 +80,8 @@ namespace Base
                 m_pFreedLink    = NULL;
             }
 
-            void mergeMemPool( tagMemPool& src )
-            {
-                if ( ( m_szUnitChunkSize != src.m_szUnitChunkSize ) || ( m_szUnitAvailSize != src.m_szUnitAvailSize ) ) return;
-
-                m_uiInitCount       = MAX( m_uiInitCount, src.m_uiInitCount );
-                m_uiMaxCount        = m_uiMaxCount == 0 ? m_uiMaxCount + src.m_uiMaxCount : 0;
-                m_uiAppendCount     = MAX( m_uiAppendCount, src.m_uiAppendCount );
-                m_uiCurrentCount    = MAX( m_uiCurrentCount, src.m_uiCurrentCount );
-
-                m_bAllocated        = ( m_bAllocated && src.m_bAllocated );
-
-                if ( src.m_pCurBlock ) {
-                    if ( m_pCurBlock ) {
-                        // find end of bolck
-                        tagPoolBlock* pSrcEnd = src.m_pCurBlock;
-                        while ( pSrcEnd->pNextBlock ) {
-                            pSrcEnd = pSrcEnd->pNextBlock;
-                        }
-                        pSrcEnd->pNextBlock = m_pCurBlock->pNextBlock;
-                        m_pCurBlock->pNextBlock = src.m_pCurBlock;
-                    } else {
-                        m_pCurBlock = src.m_pCurBlock;
-                    }
-                }
-
-                if ( src.m_pFreedLink ) {
-                    if ( m_pFreedLink ) {
-                        // find end of free link
-                        tagUnitNode* pSrcEnd = src.m_pFreedLink;
-                        while ( pSrcEnd->pNextUnit ) {
-                            pSrcEnd = pSrcEnd->pNextUnit;
-                        }
-                        pSrcEnd->pNextUnit = m_pFreedLink->pNextUnit;
-                        m_pFreedLink->pNextUnit = src.m_pFreedLink;
-                    } else {
-                        m_pFreedLink = src.m_pFreedLink;
-                    }
-                }
-
-                src.reset();
-            }
-
-            void reset()
-            {
-                m_szUnitChunkSize   = 0;
-                m_szUnitAvailSize   = 0;
-                m_uiInitCount       = 0;
-                m_uiMaxCount        = 0;
-                m_uiAppendCount     = 0;
-                m_uiCurrentCount    = 0;
-
-                m_bAllocated        = FALSE;
-                m_pCurBlock         = NULL;
-                m_pFreedLink        = NULL;
-            }
+            void mergeMemPool( tagMemPool& src );
+            void reset();
         };
         typedef tagMemPool* PMemPool;
 
