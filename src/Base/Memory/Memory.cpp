@@ -43,11 +43,11 @@ namespace Base
 
     UINT Memory::registClassName( const STRING& strClassName )
     {
-        CMemManager* pMemManager = CMemManager::getInstance();
+        // CMemManager* pMemManager = CMemManager::getInstance();
 
-        if ( pMemManager ) {
-            return pMemManager->registClassName( strClassName );
-        }
+        // if ( pMemManager ) {
+        //     return pMemManager->registClassName( strClassName );
+        // }
 
         return 0;
     }
