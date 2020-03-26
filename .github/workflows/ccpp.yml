@@ -1,0 +1,24 @@
+name: C/C++ CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - uses: actions/checkout@v2
+    - name: Build Library and Demo
+      run:
+        chmod a+x auto-build.sh
+        ./auto-build.sh
+    - name: Run tests
+      run:
+        cd Project/Demo/target
+        cp ../../doc/Memory.json .
+        ./Demo
