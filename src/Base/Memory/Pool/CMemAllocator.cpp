@@ -50,8 +50,9 @@ namespace Base
 
     BOOLEAN CMemAllocator::initialize( const JSON& jConfig, UINT uiExtSize )
     {
-        ::std::cout << jConfig.dump(4) << ::std::endl;
         auto jPool = jConfig["pool"];
+
+        ::std::cout << jPool.dump(4) << ::std::endl;
 
         initialize( jConfig["memory_align_byte"].get<UINT>(), jPool.size() );
         for ( auto it = jPool.begin(); it != jPool.end(); ++it ) {
