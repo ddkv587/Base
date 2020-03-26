@@ -11,7 +11,7 @@ PCH_H          := $(CPP_SRCDIR)/CBase.hpp
 CPP_SRC        := $(shell find $(CPP_SRCDIR) -name "CMemAllocator.cpp")
 CPP_SRC        += $(shell find $(CPP_SRCDIR) -name "CMemManager.cpp")
 CPP_SRC        += $(shell find $(CPP_SRCDIR) -name "Memory.cpp")
-CPP_SRC        := $(shell find $(CPP_SRCDIR) -name "CLog.cpp")
+CPP_SRC        += $(shell find $(CPP_SRCDIR) -name "CLog.cpp")
 CPP_SRC        += $(shell find $(CPP_SRCDIR) -name "CSampleThreadPool.cpp")
 C_SRC          := $(shell find $(CPP_SRCDIR) -name "*.c")
 

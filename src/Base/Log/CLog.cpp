@@ -52,14 +52,15 @@ namespace Base
         INT iSize   = 512;
         CHAR* buff  = ( CHAR* )malloc( iSize );
         
+		const CHAR* acFmt = fmt.c_str();
         va_list v1;
-        va_start( v1, fmt.c_str() );
-        INT nsize = vsnprintf( buff, iSize, fmt.c_str(), v1 );
+        va_start( v1, acFmt );
+        INT nsize = vsnprintf( buff, iSize, acFmt, v1 );
         if ( iSize <= nsize ) {
             // realloc
             free( buff );
             buff    = ( CHAR* )malloc( nsize + 1 );
-            nsize   = vsnprintf( buff, iSize, fmt.c_str(), v1 );
+            nsize   = vsnprintf( buff, iSize, acFmt, v1 );
         }
         std::string ret( buff );
         va_end(v1);
