@@ -94,7 +94,7 @@ namespace Base
 
             if ( it == m_mapMemPool.end() ) {
                 // insert
-                m_mapMemPool.emplace( szUnitChunkSize, szUnitAvailSize, szUnitSize, uiInitCount, uiMaxCount, uiAppendCount, 0 );
+                m_mapMemPool.emplace( szUnitAvailSize, szUnitChunkSize, szUnitAvailSize, uiInitCount, uiMaxCount, uiAppendCount, 0 );
             } else {
                 // merge
                 auto pool = it->second;
@@ -219,7 +219,7 @@ namespace Base
         }
 
         UINT uiBlockSize =	MEM_ALIGN_PAD_SIZE( SIZE_POOL_BLOCK_HEARDER + SIZE_UNIT_NODE_HEARDER, m_uiMemAlignMask )
-                                + pMemPool->m_uiUnitChunkSize * uiAddCount - SIZE_UNIT_NODE_HEARDER;
+                                + pMemPool->m_szUnitChunkSize * uiAddCount - SIZE_UNIT_NODE_HEARDER;
         PPoolBlock pPoolBlock = (PPoolBlock)::malloc( uiBlockSize );
         if ( !pPoolBlock )
         {
@@ -287,7 +287,7 @@ namespace Base
             }
         }
 
-        pUnitNode = PUnitNode( (BYTE*)PTR_POOL_BLOCK_DATA( pPoolBlock, m_uiBlockDataOffset ) + pMemPool->m_uiUnitChunkSize * pPoolBlock->uiUsedCursor );
+        pUnitNode = PUnitNode( (BYTE*)PTR_POOL_BLOCK_DATA( pPoolBlock, m_uiBlockDataOffset ) + pMemPool->m_szUnitChunkSize * pPoolBlock->uiUsedCursor );
         pPoolBlock->uiUsedCursor++;
 
         pUnitNode->szMagic  = MAKE_UNIT_NODE_MAGIC(pUnitNode);
