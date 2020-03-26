@@ -53,13 +53,13 @@ namespace Base
         CHAR* buff  = ( CHAR* )malloc( iSize );
         
         va_list v1;
-        va_start(v1, fmt);
-        INT nsize = vsnprintf( buff, iSize, fmt, v1 );
+        va_start( v1, fmt.c_str() );
+        INT nsize = vsnprintf( buff, iSize, fmt.c_str(), v1 );
         if ( iSize <= nsize ) {
             // realloc
             free( buff );
             buff    = ( CHAR* )malloc( nsize + 1 );
-            nsize   = vsnprintf( buff, iSize, fmt, v1 );
+            nsize   = vsnprintf( buff, iSize, fmt.c_str(), v1 );
         }
         std::string ret( buff );
         va_end(v1);
