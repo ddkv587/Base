@@ -50,6 +50,7 @@
         "unordered_map": "cpp",
         "valarray": "cpp",
         "xhash": "cpp",
-        "fstream": "cpp"
+        "fstream": "cpp",
+        "cstdarg": "cpp"
     }
 }
