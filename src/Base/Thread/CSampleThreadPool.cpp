@@ -72,7 +72,9 @@ namespace Base
             }
         }
 
-        ::std::cout << "thread " << ::std::this_thread::get_id() << " exit!\n";
+        LOG(INFO) << "thread " 
+                    << ::std::this_thread::get_id() 
+                    << " exit!\n";
     } 
     
     CThreadPool::tagTask CThreadPool::task()

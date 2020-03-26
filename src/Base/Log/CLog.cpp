@@ -1,3 +1,4 @@
+#include <stdarg.h>
 #include <glog/logging.h>
 #include <sys/types.h>
 #include <dirent.h>
