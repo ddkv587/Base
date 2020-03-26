@@ -1,0 +1,24 @@
+{
+    "use_allocator": true,
+    "use_memchecker": false,
+
+    "allocator": {
+        "memory_align_byte": 4,
+        "pool": [
+            { "unit_size": 8,       "init_count":7500,      "max_count":0,      "append_count":200 },
+            { "unit_size": 16,      "init_count":5000,      "max_count":0,      "append_count":200 },
+            { "unit_size": 32,      "init_count":5000,      "max_count":0,      "append_count":200 },
+            { "unit_size": 64,      "init_count":1000,      "max_count":0,      "append_count":200 },
+            { "unit_size": 128,     "init_count":500,       "max_count":0,      "append_count":200 },
+            { "unit_size": 256,     "init_count":500,       "max_count":0,      "append_count":200 },
+            { "unit_size": 1024,    "init_count":100,       "max_count":300,    "append_count":100 },
+            { "unit_size": 2048,    "init_count":100,       "max_count":300,    "append_count":100 },
+            { "unit_size": 4096,    "init_count":100,       "max_count":300,    "append_count":100 }
+            ]
+    },
+
+    "memchecker": {
+        "output": "./MemReport"
+    }
+}
+
