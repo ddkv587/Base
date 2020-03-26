@@ -5,8 +5,9 @@
 #include "CBase.hpp"
 
 using namespace std::chrono_literals;
-
 ::std::mutex s_mutex;
+
+MEMORY_CONTROL
 
 void task(  void *pData )
 {
