@@ -9,7 +9,7 @@ dos2unix */*
 
 
 ./make-clean
-#./make-debug
+./make-debug
 ./make-release
 
 if [ $? -ne 0 ]; then
