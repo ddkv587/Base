@@ -32,11 +32,11 @@ namespace Base
 
     INT Memory::checkPtr( void* ptr, const STRING& strHint )
     {
-        CMemManager* pMemManager = CMemManager::getInstance();
+        // CMemManager* pMemManager = CMemManager::getInstance();
 
-        if ( pMemManager ) {
-            return pMemManager->checkPtr( ptr );
-        }
+        // if ( pMemManager ) {
+        //     return pMemManager->checkPtr( ptr );
+        // }
 
         return -1;
     }
