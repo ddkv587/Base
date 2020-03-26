@@ -19,6 +19,7 @@ namespace Base
 #include <atomic>
 
 #include "TypeDefine.hpp"
+#include "MacroDefine.hpp"
 
 #include "Memory/Pool/CMemAllocator.hpp"
 #include "Memory/Pool/CMemManager.hpp"
