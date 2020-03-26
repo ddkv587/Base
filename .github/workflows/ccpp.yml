@@ -14,9 +14,9 @@ jobs:
     - uses: actions/checkout@master
     - name: Build Library and Demo
       run:
-        chmod a+x auto-build.sh
-        ./auto-build.sh
-        pwd && find .
-        cd Project/Demo/target
-        cp ../../doc/Memory.json .
+        chmod a+x auto-build.sh &&
+        ./auto-build.sh &&
+        pwd && find . &&
+        cd Project/Demo/target &&
+        cp ../../doc/Memory.json . &&
         ./Demo
