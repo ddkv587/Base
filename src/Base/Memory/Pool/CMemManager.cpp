@@ -109,7 +109,7 @@ namespace Base
         return FALSE;
     }
 
-    BOOLEAN CMemManager::generatePoolConfig( const String& strFileName, UINT uiIncBytes )
+    BOOLEAN CMemManager::generatePoolConfig( const STRING& strFileName, UINT uiIncBytes )
     {
         // if ( m_pMemChecker ) {
         //     return m_pMemChecker->generatePoolConfig( strFileName, uiIncBytes );
@@ -118,7 +118,7 @@ namespace Base
         return FALSE;
     }
 
-    void CMemManager::registThreadName( UINT tID, const String& strName )
+    void CMemManager::registThreadName( UINT tID, const STRING& strName )
     {
         // if ( m_pMemChecker ) {
         //     m_pMemChecker->registThreadName( tID, strName );
@@ -145,7 +145,8 @@ namespace Base
         if ( bAllocator ) {
             m_pMemAllocator = new CMemAllocator();
 
-            if ( !m_pMemAllocator->initialize( jMemParser["allocator"], bMemchecker ? CMemChecker::getBlockExtSize() : 0 ) ) {
+            //if ( !m_pMemAllocator->initialize( jMemParser["allocator"], bMemchecker ? CMemChecker::getBlockExtSize() : 0 ) ) {
+            if ( !m_pMemAllocator->initialize( jMemParser["allocator"], 0 ) ) {
                 delete m_pMemAllocator;
                 m_pMemAllocator = NULL;
             }
