@@ -168,7 +168,7 @@ namespace Base
                 PUnitNode pUnitNode = PUnitNode( (BYTE*)pRet + m_uiSysChunkHdrSize - SIZE_UNIT_NODE_HEARDER);
 
                 pUnitNode->pMemPool = NULL;
-                pUnitNode->uiMagic  = MAKE_UNIT_NODE_MAGIC(pUnitNode);
+                pUnitNode->szMagic  = MAKE_UNIT_NODE_MAGIC(pUnitNode);
 
                 return PTR_UNIT_NODE_DATA(pUnitNode);
             }
@@ -179,7 +179,7 @@ namespace Base
     {
         tagUnitNode* pUnitNode = PTR_UNIT_NODE_HEADER( p );
 
-        if ( pUnitNode->uiMagic != MAKE_UNIT_NODE_MAGIC( pUnitNode ) ) {
+        if ( pUnitNode->szMagic != MAKE_UNIT_NODE_MAGIC( pUnitNode ) ) {
             printf("[Warning][BASE] Free(0x%x): Invalid Pointer, Maybe it had been freed or crashed.\n", p);
             return;
         }
@@ -245,14 +245,14 @@ namespace Base
         {
             tagMemPool* pMemPool = m_pAryMemPool + uiIndex;
 
-            PPoolBlock pPoolBlock = pMemPool->m_pFirstBlock;
+            PPoolBlock pPoolBlock = pMemPool->m_pCurBlock;
             while (pPoolBlock)
             {
                 PPoolBlock pTempBlock = pPoolBlock;
                 pPoolBlock = pPoolBlock->pNextBlock;
                 ::free(pTempBlock);
             }
-            pMemPool->m_pFirstBlock = NULL;
+            pMemPool->m_pCurBlock = NULL;
 
             ++uiIndex;
         }
@@ -272,7 +272,7 @@ namespace Base
 
         if ( pUnitNode != NULL ) {
             pMemPool->m_pFreedLink  = pUnitNode->pNextUnit;
-            pUnitNode->uiMagic      = MAKE_UNIT_NODE_MAGIC(pUnitNode);
+            pUnitNode->szMagic      = MAKE_UNIT_NODE_MAGIC(pUnitNode);
 
             return PTR_UNIT_NODE_DATA(pUnitNode);
         }
@@ -290,7 +290,7 @@ namespace Base
         pUnitNode = PUnitNode( (BYTE*)PTR_POOL_BLOCK_DATA( pPoolBlock, m_uiBlockDataOffset ) + pMemPool->m_uiUnitChunkSize * pPoolBlock->uiUsedCursor );
         pPoolBlock->uiUsedCursor++;
 
-        pUnitNode->uiMagic  = MAKE_UNIT_NODE_MAGIC(pUnitNode);
+        pUnitNode->szMagic  = MAKE_UNIT_NODE_MAGIC(pUnitNode);
         pUnitNode->pMemPool = pMemPool;
 
         return PTR_UNIT_NODE_DATA(pUnitNode);
