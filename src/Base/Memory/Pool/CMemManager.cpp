@@ -134,7 +134,7 @@ namespace Base
 
             jMemParser = JSON::parse( ifs, nullptr, false );
 
-            if ( !ifs.good() || jMemParser.is_discarded() ) {
+            if ( jMemParser.is_discarded() ) {
                 // TODO : log error when parser memory config
                 printf( "[Error][BASE] memory config parser error \n" );
 

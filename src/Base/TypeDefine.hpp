@@ -20,8 +20,6 @@
 #include <functional>
 #include <condition_variable>
 
-#include "ThirdLibrary.hpp"
-
 namespace Base
 {
     typedef         char                            CHAR;

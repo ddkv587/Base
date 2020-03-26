@@ -18,6 +18,8 @@ namespace Base
 }
 
 #include <atomic>
+
+#include "ThirdLibrary.hpp"
 #include "TypeDefine.hpp"
 #include "MacroDefine.hpp"
 
