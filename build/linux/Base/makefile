@@ -8,7 +8,10 @@ CPP_SRCDIR     := $(SOURCE_ROOT)/Base
 PCH_H          := $(CPP_SRCDIR)/CBase.hpp
 
 #CPP_SRC        := $(shell find $(CPP_SRCDIR) -name "*.cpp")
-CPP_SRC        := $(shell find $(CPP_SRCDIR) -name "CSampleThreadPool.cpp")
+CPP_SRC        := $(shell find $(CPP_SRCDIR) -name "CMemAllocator.cpp")
+CPP_SRC        := $(shell find $(CPP_SRCDIR) -name "CMemoryManager.cpp")
+CPP_SRC        := $(shell find $(CPP_SRCDIR) -name "Memory.cpp")
+CPP_SRC        += $(shell find $(CPP_SRCDIR) -name "CSampleThreadPool.cpp")
 C_SRC          := $(shell find $(CPP_SRCDIR) -name "*.c")
 
 LIBS           += 

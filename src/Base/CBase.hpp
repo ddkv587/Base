@@ -5,8 +5,8 @@
  * @Last Modified time: 2020-03-18 17:14:38 
  */
 
-#ifndef __CBASEHPP__
-#define __CBASEHPP__
+#ifndef __CBASE_HPP__
+#define __CBASE_HPP__
 
 namespace Base
 {
@@ -18,7 +18,6 @@ namespace Base
 }
 
 #include <atomic>
-
 #include "TypeDefine.hpp"
 #include "MacroDefine.hpp"
 

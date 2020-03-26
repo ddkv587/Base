@@ -1,6 +1,5 @@
-#include "CBase.hpp"
-
 #include <cstdlib>
+#include "CBase.hpp"
 
 namespace Base
 {
