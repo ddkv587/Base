@@ -19,7 +19,7 @@ jobs:
         ./auto-build.sh
     - name: Run tests
       run:
-        pwd && tree &&
+        pwd && find . &&
         cd Project/Demo/target &&
         cp ../../doc/Memory.json . &&
         ./Demo
