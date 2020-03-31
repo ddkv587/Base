@@ -11,12 +11,12 @@ jobs:
     name: Build Library and Demo
     runs-on: ubuntu-latest
     steps:
-    - name: Build Library and Demo
-    - uses: docker://ddkv587/ubuntu
-      run:
-        chmod a+x auto-build.sh &&
-        ./auto-build.sh &&
-        pwd && find . &&
-        cd Project/Demo/target &&
-        cp ../../doc/Memory.json . &&
-        ./Demo
+      - name: Build Library and Demo
+      - uses: docker://ddkv587/ubuntu
+        run:
+          chmod a+x auto-build.sh &&
+          ./auto-build.sh &&
+          pwd && find . &&
+          cd Project/Demo/target &&
+          cp ../../doc/Memory.json . &&
+          ./Demo
