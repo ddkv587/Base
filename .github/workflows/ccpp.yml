@@ -20,3 +20,5 @@ jobs:
           cd Project/Demo/target &&
           cp ../../doc/Memory.json . &&
           ./Demo
+          
+          
