@@ -15,8 +15,4 @@ jobs:
       - name: Build Library and Demo
         run:
           chmod a+x auto-build.sh &&
-          ./auto-build.sh &&
-          pwd &&
-          cp Project/Demo/doc/Memory.json Project/Demo/target &&
-          cd Project/Demo/target &&
-          ./Demo
+          ./auto-build.sh
