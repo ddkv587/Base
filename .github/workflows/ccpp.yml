@@ -16,7 +16,7 @@ jobs:
         run:
           chmod a+x auto-build.sh &&
           ./auto-build.sh &&
-          pwd && find . &&
+          pwd &&
+          cp Project/Demo/doc/Memory.json Project/Demo/target &&
           cd Project/Demo/target &&
-          cp ../../doc/Memory.json . &&
           ./Demo
