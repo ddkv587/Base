@@ -9,7 +9,7 @@ on:
 jobs:
   build:
     name: Build Library and Demo
-    runs-on: ubuntu-latest
+    runs-on: self-hosted
     steps:
       - uses: actions/checkout@master
       - name: Build Library and Demo
