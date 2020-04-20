@@ -146,7 +146,7 @@ namespace Base
         SIZE szUnitChunkSize = MEM_ALIGN_PAD_SIZE( szUnitSize + SIZE_UNIT_NODE_HEARDER, m_uiMemAlignMask );
         SIZE szUnitAvailSize = szUnitChunkSize - SIZE_UNIT_NODE_HEARDER;
         {
-            m_amHookLock.fetch_add( 1, ::std::memory_order_consume );
+            ++m_amHookLock;
 
             auto it = m_mapMemPool.find( szUnitAvailSize );
 
@@ -162,7 +162,7 @@ namespace Base
                 pool.m_uiAppendCount  = MAX( pool.m_uiAppendCount, uiAppendCount );
             }
 
-            m_amHookLock.fetch_sub( 1, ::std::memory_order_consume );
+            --m_amHookLock;
         }
 
         return TRUE;
@@ -209,9 +209,7 @@ namespace Base
 
     void* CMemAllocator::malloc(SIZE size)
     {
-        if ( m_amHookLock.fetch_add( 1, ::std::memory_order_acquire ) ) {
-            m_amHookLock.fetch_sub( 1, ::std::memory_order_consume );
-
+        if ( m_amHookLock.load( ::std::memory_order_acquire ) ) {
             return ::malloc( size );
         }
 
