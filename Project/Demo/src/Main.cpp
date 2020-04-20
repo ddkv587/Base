@@ -93,9 +93,13 @@ int main(int argc, char const *argv[])
     getchar();
 #endif
 
-    new ::Base::INT(10);
-    new ::Base::CHAR('c');
-    new ::Base::INT[10];
+    auto a = new ::Base::INT(10);
+    auto b = new ::Base::CHAR('c');
+    auto c = new ::Base::INT[10];
+
+    delete a;
+    delete b;
+    delete [] c;
 
     return 0;
 }
