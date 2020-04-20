@@ -5,8 +5,8 @@
  * @Last Modified time: 2020-03-26 15:51:40
  */
 
-#ifndef __BASE_THIRDLIBRARY_HPP__
-#define __BASE_THIRDLIBRARY_HPP__
+#ifndef DEF__BASE_THIRDLIBRARY_HPP__
+#define DEF__BASE_THIRDLIBRARY_HPP__
 
 // json library: https://github.com/nlohmann/json/tree/master
 #include "Format/Json/nlohmann/json.hpp"

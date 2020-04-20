@@ -5,8 +5,8 @@
  * @Last Modified time: 2020-03-23 18:49:56
  */
 
-#ifndef __BASE_CMEMCHECKER_HPP__
-#define __BASE_CMEMCHECKER_HPP__
+#ifndef DEF__BASE_CMEMCHECKER_HPP__
+#define DEF__BASE_CMEMCHECKER_HPP__
 
 namespace Base
 {

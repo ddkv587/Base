@@ -5,8 +5,8 @@
  * @Last Modified time: 2020-03-18 17:15:00
  */
 
-#ifndef __BASE_CTHREADPOOLHPP__
-#define __BASE_CTHREADPOOLHPP__
+#ifndef DEF__BASE_CTHREADPOOLHPP__
+#define DEF__BASE_CTHREADPOOLHPP__
 
 namespace NET
 {

@@ -5,8 +5,8 @@
  * @Last Modified time: 2020-03-18 17:45:31
  */
 
-#ifndef __BASE_MEMORY_HPP__
-#define __BASE_MEMORY_HPP__
+#ifndef DEF__BASE_MEMORY_HPP__
+#define DEF__BASE_MEMORY_HPP__
 
 namespace Base
 {

@@ -5,8 +5,8 @@
  * @Last Modified time: 2020-03-18 17:55:33
  */
 
-#ifndef __BASE_MACRODEFINE_HPP__
-#define __BASE_MACRODEFINE_HPP__
+#ifndef DEF__BASE_MACRODEFINE_HPP__
+#define DEF__BASE_MACRODEFINE_HPP__
 
 #include "TypeDefine.hpp"
 

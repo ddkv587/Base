@@ -5,8 +5,8 @@
  * @Last Modified time: 2020-03-23 17:14:12
  */
 
-#ifndef __BASE_TYPEDEFINE_HPP__
-#define __BASE_TYPEDEFINE_HPP__
+#ifndef DEF__BASE_TYPEDEFINE_HPP__
+#define DEF__BASE_TYPEDEFINE_HPP__
 
 #include <cstdint>
 #include <string>

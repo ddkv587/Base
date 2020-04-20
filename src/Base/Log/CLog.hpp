@@ -5,8 +5,8 @@
  * @Last Modified time: 2020-03-26 15:35:09
  */
 
-#ifndef __BASE_CLOG_HPP__
-#define __BASE_CLOG_HPP__
+#ifndef DEF__BASE_CLOG_HPP__
+#define DEF__BASE_CLOG_HPP__
 
 namespace Base
 {

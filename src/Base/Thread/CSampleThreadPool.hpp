@@ -5,8 +5,8 @@
  * @Last Modified time: 2020-03-26 16:56:18
  */
 
-#ifndef __BASE_CSAMPLETHREADMANAGERHPP__
-#define __BASE_CSAMPLETHREADMANAGERHPP__
+#ifndef DEF__BASE_CSAMPLETHREADMANAGERHPP__
+#define DEF__BASE_CSAMPLETHREADMANAGERHPP__
 
 #include "TypeDefine.hpp"
 

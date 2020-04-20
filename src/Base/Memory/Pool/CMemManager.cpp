@@ -10,12 +10,9 @@ namespace Base
 
     CMemManager* CMemManager::getInstance()
     {
-        if ( s_bInitialized )
-        {
+        if ( s_bInitialized ) {
             return &g_memManager;
-        }
-        else
-        {
+        } else {
             return NULL;
         }
     }
@@ -36,14 +33,12 @@ namespace Base
 
         s_bInitialized = FALSE;
 
-        if ( m_pMemChecker )
-        {
+        if ( m_pMemChecker ) {
             delete m_pMemChecker;
             m_pMemChecker = NULL;
         }
 
-        if ( m_pMemAllocator )
-        {
+        if ( m_pMemAllocator ) {
             delete m_pMemAllocator;
             m_pMemAllocator = NULL;
         }
@@ -136,7 +131,7 @@ namespace Base
 
             if ( jMemParser.is_discarded() ) {
                 // TODO : log error when parser memory config
-                printf( "[Error][BASE] memory config parser error \n" );
+                printf( "[BASE][Error] memory config parser error \n" );
 
                 return;
             }
