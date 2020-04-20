@@ -78,7 +78,7 @@ int main(int argc, char const *argv[])
     ::std::cout << mem.dump(4) << ::std::endl;
 #endif
 
-#if 1
+#if 0
     // sample thread pool
     ::Base::CThreadPool pool( 10, 100 );
 

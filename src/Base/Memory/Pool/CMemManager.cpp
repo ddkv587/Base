@@ -63,11 +63,15 @@ namespace Base
                     !strClassName.empty() ? strClassName.c_str() : "UnregisteredClass or AtomType", size, ::std::this_thread::get_id() );
         }
 
+        printf( "[Base][Debug] malloc size: %d, name: %s, classID: %d, ptr: %p\n", size, strClassName, uiClassID, pRet );
+
         return pRet;
     }
 
     void CMemManager::free( void* ptr )
     {
+        printf( "[Base][Debug] free pyt: %p\n", ptr );
+
         if ( m_pMemChecker ) {
             //m_pMemChecker->free( ptr );
         } else if ( m_pMemAllocator ) {
