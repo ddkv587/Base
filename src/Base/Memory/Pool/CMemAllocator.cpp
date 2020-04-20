@@ -218,6 +218,8 @@ namespace Base
         auto it = m_mapMemPool.lower_bound( size );
 
         if ( it != m_mapMemPool.end() ) {
+            ::std::lock_guard<SMUTEX> lock( m_syncMutex );
+
             void* ptr = allocUnit( &( it->second ) );
 
             printf("[Info][BASE] CMemAllocator malloc from pool, size: %lld, ptr: %p, magic: %lld\n", size, ptr, ( (PUnitNode) PTR_UNIT_NODE_HEADER( ptr ) )->szMagic );
@@ -336,8 +338,6 @@ namespace Base
 
     void* CMemAllocator::allocUnit( tagMemPool* pMemPool )
     {
-        ::std::lock_guard<SMUTEX> lock( m_syncMutex );
-
         PUnitNode pUnitNode = pMemPool->m_pFreedLink;
 
         if ( pUnitNode != NULL ) {
