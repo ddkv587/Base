@@ -16,8 +16,7 @@ namespace Base
 
     void Memory::free( void* ptr )
     {
-        if ( !ptr )
-        {
+        if ( !ptr ) {
             return;
         }
 
