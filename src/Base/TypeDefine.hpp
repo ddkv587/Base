@@ -54,34 +54,6 @@ namespace Base
     template< class T > using SSTACK           = ::std::stack< T >;
     template< class Key, class Value, class Compare = ::std::less<Key> > 
     using SMAP             = ::std::map< Key, Value, Compare >;
-
-    #ifndef TRUE
-    #define TRUE                        true
-    #endif
-
-    #ifndef FALSE
-    #define FALSE                       false
-    #endif
-
-    #ifndef NULL
-    #define NULL                        nullptr
-    #endif
-
-    #ifndef STRING_NULL
-    #define STRING_NULL                 ""
-    #endif
-
-    #ifndef UNUSED
-    #define UNUSED(X)                   (void)(X)
-    #endif
-
-    #ifndef MAX
-    #define MAX(a, b)                   ( ( a ) > ( b ) ) ? ( a ) : ( b )
-    #endif
-
-    #ifndef MIN
-    #define MIN(a, b)                   ( ( a ) < ( b ) ) ? ( a ) : ( b )
-    #endif
 }
 
 #endif

@@ -5,8 +5,8 @@
 
 namespace Base
 {
-    static BOOLEAN      s_bInitialized = FALSE;
-    static CMemManager  g_memManager;
+    static BOOLEAN          s_bInitialized = FALSE;
+    static CMemManager      g_memManager;
 
     CMemManager* CMemManager::getInstance()
     {
@@ -29,19 +29,10 @@ namespace Base
 
     CMemManager::~CMemManager()
     {
-        outputState(0);
-
         s_bInitialized = FALSE;
 
-        if ( m_pMemChecker ) {
-            delete m_pMemChecker;
-            m_pMemChecker = NULL;
-        }
-
-        if ( m_pMemAllocator ) {
-            delete m_pMemAllocator;
-            m_pMemAllocator = NULL;
-        }
+        SAFE_DELETE( m_pMemChecker );
+        SAFE_DELETE( m_pMemAllocator );
     }
 
     void* CMemManager::malloc( SIZE size, const STRING& strClassName, UINT uiClassID )
@@ -50,7 +41,7 @@ namespace Base
 
         {
             if ( m_pMemChecker ) {
-                //pRet = m_pMemChecker->malloc( size, uiClassID );
+                pRet = m_pMemChecker->malloc( size, uiClassID );
             } else if ( m_pMemAllocator ) {
                 pRet = m_pMemAllocator->malloc( size );
             } else {

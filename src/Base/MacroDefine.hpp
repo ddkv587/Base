@@ -10,23 +10,58 @@
 
 #include "TypeDefine.hpp"
 
+namespace Base
+{
+    #ifndef TRUE
+    #define TRUE                        true
+    #endif
+
+    #ifndef FALSE
+    #define FALSE                       false
+    #endif
+
+    #ifndef NULL
+    #define NULL                        nullptr
+    #endif
+
+    #ifndef STRING_NULL
+    #define STRING_NULL                 ""
+    #endif
+
+    #ifndef UNUSED
+    #define UNUSED(X)                   (void)(X)
+    #endif
+
+    #ifndef MAX
+    #define MAX(a, b)                   ( ( ( a ) > ( b ) ) ? ( a ) : ( b ) )
+    #endif
+
+    #ifndef MIN
+    #define MIN(a, b)                   ( ( ( a ) < ( b ) ) ? ( a ) : ( b ) )
+    #endif
+
+    #ifndef SAFE_DELETE
+    #define SAFE_DELETE(ptr)            do { if ( ( ptr ) ) { delete (ptr); (ptr) = NULL; } } while( 0 )
+
+    #endif
+
 // ================= memory =================
 #define MEMORY_CONTROL \
     void* operator new( size_t size ) \
     { \
-        return ::Base::Memory::malloc( ::Base::SIZE( size ) ); \
+        return ::Base::Memory::traceMalloc( ::Base::SIZE( size ) ); \
     } \
     void* operator new[]( size_t size ) \
     { \
-        return ::Base::Memory::malloc( ::Base::SIZE( size ) ); \
+        return ::Base::Memory::traceMalloc( ::Base::SIZE( size ) ); \
     } \
     void operator delete[]( void* p ) \
     { \
-        ::Base::Memory::free( p ); \
+        ::Base::Memory::traceFree( p ); \
     } \
     void operator delete( void* p ) \
     { \
-        ::Base::Memory::free( p ); \
+        ::Base::Memory::traceFree( p ); \
     }
 /*
 #define IMP_OPERATOR_NEW( ClassName ) \
@@ -72,5 +107,7 @@
     { \
         ::Base::Memory::checkPtr( ObjPtr, Hint ); \
     }
+
+}
 
 #endif

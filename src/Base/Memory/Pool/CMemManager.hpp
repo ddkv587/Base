@@ -55,15 +55,14 @@ namespace Base
         CMemManager& operator=( CMemManager&& ) = delete;
 
     private:// method
-        void        initialize();
+        void                    initialize();
 
     protected:// property
 
     private:// property
         CMemAllocator*              m_pMemAllocator;
-        //CMemChecker*              m_pMemChecker;
-        CMemAllocator*              m_pMemChecker;
-
+        CMemChecker*                m_pMemChecker;
+       
         SMUTEX                      m_mutexCallback;
         BOOLEAN                     m_bCallbacking;
     };

@@ -21,8 +21,8 @@ namespace Base
     private:// embed class or struct or enum
 
     public:// method
-        static void*    malloc( SIZE size, const STRING& strClassName = STRING_NULL, UINT uiClassID = 0 );
-        static void     free( void* ptr );
+        static void*    traceMalloc( SIZE size, const STRING& strClassName = STRING_NULL, UINT uiClassID = 0 );
+        static void     traceFree( void* ptr );
         static INT      checkPtr( void* ptr, const STRING& strHint = STRING_NULL );
         static UINT     registClassName( const STRING& strClassName );
 
