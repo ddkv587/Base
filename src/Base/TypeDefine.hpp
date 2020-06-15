@@ -36,6 +36,7 @@ namespace Base
     typedef         float                           FLOAT;
     typedef         double                          DOUBLE;
     typedef         size_t                          SIZE;
+    typedef         uintptr_t                       UINTPTR;
 
     typedef         UINT8                           BYTE;
     typedef         INT64                           LONG;
