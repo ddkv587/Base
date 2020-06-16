@@ -63,13 +63,12 @@ namespace Base
     { \
         ::Base::Memory::traceFree( p ); \
     }
-/*
+
 #define IMP_OPERATOR_NEW( ClassName ) \
     void* operator new( size_t size ) \
     { \
         static INT s_uiClassID = 0; \
-        if ( s_uiClassID == 0 ) \
-        { \
+        if ( s_uiClassID == 0 ) { \
             //s_uiClassID = ::Base::Memory::registClassName( ClassName );
         } \
         return ::Base::Memory::malloc( ::Base::SIZE( size ), ClassName, s_uiClassID ); \
@@ -77,8 +76,7 @@ namespace Base
     void* operator new[]( size_t size ) \
     { \
         static INT s_uiClassID = 0; \
-        if ( s_uiClassID == 0 ) \
-        { \
+        if ( s_uiClassID == 0 ) { \
             s_uiClassID = ::Base::Memory::registClassName( ClassName ); \
         } \
         return ::Base::Memory::malloc( ::Base::SIZE( size ), ClassName, s_uiClassID ); \
@@ -101,7 +99,6 @@ namespace Base
     //	} \
     //	return ::Base::Memory::delete( p, ClassName, s_uiClassID ); \
     //}
-*/
 
 #define CHECK_OBJECT_PTR( ObjPtr, Hint ) \
     { \

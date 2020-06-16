@@ -1,11 +1,9 @@
-#include <iostream>
-
 #include "CBase.hpp"
 
 namespace Base
 {
-    #define SIZE_UNIT_NODE_HEARDER                      sizeof( tagUnitNode )
-    #define SIZE_POOL_BLOCK_HEARDER                     sizeof( tagPoolBlock )
+    static constexpr SIZE SIZE_UNIT_NODE_HEARDER    = sizeof( tagUnitNode );
+    static constexpr SIZE SIZE_POOL_BLOCK_HEARDER   =sizeof( tagPoolBlock );
 
     #define PTR_UNIT_NODE_HEADER(ptr_unit_data)         PUnitNode((BYTE*)ptr_unit_data - SIZE_UNIT_NODE_HEARDER)
     #define PTR_UNIT_NODE_DATA(ptr_unit_hdr)            (void*)((BYTE*)ptr_unit_hdr + SIZE_UNIT_NODE_HEARDER)
@@ -89,18 +87,18 @@ namespace Base
         , m_uiCurPoolCount(0)
         , m_amHookLock( ATOMIC_VAR_INIT( 0 ) )
     {
-        m_uiMemAlignMask = MEM_ALIGN_MASK_DEFAULT;
+        m_uiMemAlignMask    = MEM_ALIGN_MASK_DEFAULT;
         m_uiBlockDataOffset = MEM_ALIGN_PAD_SIZE(SIZE_POOL_BLOCK_HEARDER + SIZE_UNIT_NODE_HEARDER, m_uiMemAlignMask) - SIZE_UNIT_NODE_HEARDER;
         m_uiSysChunkHdrSize = MEM_ALIGN_PAD_SIZE(SIZE_UNIT_NODE_HEARDER, m_uiMemAlignMask);
 
-        printf("[Info][BASE] Memory allocator started.\n");
+        fprintf( stderr, "[Info][BASE] Memory allocator started.\n" );
     }
 
     CMemAllocator::~CMemAllocator()
     {
         freeAllPool();
 
-        printf("[Info][BASE] Memory allocator exited.\n");
+        fprintf( stderr, "[Info][BASE] Memory allocator exited.\n" );
     }
 
     BOOLEAN CMemAllocator::initialize( const JSON& jConfig, UINT uiExtSize )
@@ -207,67 +205,87 @@ namespace Base
         return TRUE;
     }
 
-    void* CMemAllocator::malloc(SIZE size)
+    void* CMemAllocator::malloc( SIZE size )
     {
-        if ( m_amHookLock.load( ::std::memory_order_acquire ) ) {
+        if ( !m_amHookLock.load( ::std::memory_order_acquire ) ) {
+            return hookMalloc( size );
+        } else {
             return ::malloc( size );
         }
+    }
 
+    void CMemAllocator::free( void* ptr )
+    {
+        if ( !p ) {
+            fprintf( stderr, "[Warning][BASE] CMemAllocator Free(0x%x): Invalid pointer to free.\n", ptr );
+            return;
+        }
+
+        if ( !m_amHookLock.load( ::std::memory_order_acquire ) ) {
+            return hookFree( ptr );
+        } else {
+            return ::free( ptr );
+        }
+
+        
+    }
+
+    void* CMemAllocator::hookMalloc( SIZE size, UINT uiClassID )
+    {
         auto it = m_mapMemPool.lower_bound( size );
 
         if ( it != m_mapMemPool.end() ) {
             ::std::lock_guard<SMUTEX> lock( m_syncMutex );
 
             void* ptr = allocUnit( &( it->second ) );
-
-            printf("[Info][BASE] CMemAllocator malloc from pool, size: %lld, ptr: %p, magic: %lld\n", size, ptr, ( (PUnitNode) PTR_UNIT_NODE_HEADER( ptr ) )->szMagic );
+            fprintf( stderr, "[Info][BASE] CMemAllocator malloc from pool, size: %lld, ptr: %p, magic: %lld\n", size, ptr, ( (PUnitNode) PTR_UNIT_NODE_HEADER( ptr ) )->szMagic );
             return ptr;
         } else {
             void* pRet = ::malloc(m_uiSysChunkHdrSize + size);    // make sure memory alignment
 
-            if ( pRet )
-            {
+            if ( pRet ) {
                 PUnitNode pUnitNode = PUnitNode( (BYTE*)pRet + m_uiSysChunkHdrSize - SIZE_UNIT_NODE_HEARDER);
 
                 pUnitNode->pMemPool = NULL;
                 pUnitNode->szMagic  = MAKE_UNIT_NODE_MAGIC(pUnitNode);
 
-                printf("[Info][BASE] CMemAllocator malloc, size: %lld, ptr: %p, magic: %lld\n", size, PTR_UNIT_NODE_DATA(pUnitNode), pUnitNode->szMagic );
+                fprintf( stderr, "[Info][BASE] CMemAllocator malloc, size: %lld, ptr: %p, magic: %lld\n", size, PTR_UNIT_NODE_DATA(pUnitNode), pUnitNode->szMagic );
 
                 return PTR_UNIT_NODE_DATA(pUnitNode);
+            } else {
+                ;
             }
         }
 
         return NULL;
     }
 
-    void CMemAllocator::free(void* p)
+    void CMemAllocator::hookFree( void* ptr )
     {
-        tagUnitNode* pUnitNode = PTR_UNIT_NODE_HEADER( p );
+        tagUnitNode* pUnitNode = PTR_UNIT_NODE_HEADER( ptr );
 
         if ( pUnitNode->szMagic != MAKE_UNIT_NODE_MAGIC( pUnitNode ) ) {
-            printf("[Warning][BASE] Free(0x%x): Invalid Pointer, Maybe it had been freed or crashed.\n", p);
+            fprintf( stderr, "[Warning][BASE] Free(0x%x): Invalid pointer, Maybe it had been freed or crashed.\n", ptr );
             return;
         }
 
         if ( pUnitNode->pMemPool ) {
             ::std::lock_guard<SMUTEX> lock( m_syncMutex );
 
-            printf("[Info][BASE] CMemAllocator free size to free link: %p, magic: %lld\n", p, pUnitNode->szMagic );
+            fprintf( stderr, "[Info][BASE] CMemAllocator free size to free link: %p, magic: %lld\n", ptr, pUnitNode->szMagic );
 
             pUnitNode->pNextUnit                = pUnitNode->pMemPool->m_pFreedLink;
             pUnitNode->pMemPool->m_pFreedLink   = pUnitNode;
         } else {
-            printf("[Info][BASE] CMemAllocator free size: %p, magic: %lld\n", p, pUnitNode->szMagic );
+            fprintf( stderr, "[Info][BASE] CMemAllocator free size: %p, magic: %lld\n", ptr, pUnitNode->szMagic );
 
-            ::free( (BYTE*)p - m_uiSysChunkHdrSize );
+            ::free( (BYTE*)ptr - m_uiSysChunkHdrSize );
         }
     }
 
     BOOLEAN  CMemAllocator::addPoolBlock( tagMemPool* pMemPool )
     {
-        if ( ( pMemPool->m_uiMaxCount > 0 ) && ( pMemPool->m_uiCurrentCount >= pMemPool->m_uiMaxCount ) )
-        {
+        if ( ( pMemPool->m_uiMaxCount > 0 ) && ( pMemPool->m_uiCurrentCount >= pMemPool->m_uiMaxCount ) ) {
             return FALSE;
         }
 
@@ -283,17 +301,17 @@ namespace Base
         }
 
         if ( 0 == uiAddCount ) {
-            printf("[Error][BASE] CMemAllocator::addPoolBlock: Pool(index = %u) config has error, please check Memory.ini.\n",
-                    (m_pAryMemPool - pMemPool) / sizeof(tagMemPool) + 1);
+            fprintf( stderr, "[Error][BASE] CMemAllocator::addPoolBlock: Pool(index = %u) config has error, please check Memory.ini.\n",
+                    (m_pAryMemPool - pMemPool) / sizeof(tagMemPool) + 1 );
             return FALSE;
         }
 
-        UINT uiBlockSize =	MEM_ALIGN_PAD_SIZE( SIZE_POOL_BLOCK_HEARDER + SIZE_UNIT_NODE_HEARDER, m_uiMemAlignMask )
+        UINT uiBlockSize = MEM_ALIGN_PAD_SIZE( SIZE_POOL_BLOCK_HEARDER + SIZE_UNIT_NODE_HEARDER, m_uiMemAlignMask )
                                 + pMemPool->m_szUnitChunkSize * uiAddCount - SIZE_UNIT_NODE_HEARDER;
         PPoolBlock pPoolBlock = (PPoolBlock)::malloc( uiBlockSize );
         if ( !pPoolBlock )
         {
-            printf("[Warning][BASE] Allocate memory pool block failed (size = %u).\n", uiBlockSize);
+            fprintf( stderr, "[Warning][BASE] Allocate memory pool block failed (size = %u).\n", uiBlockSize );
             return FALSE;
         }
 

@@ -98,12 +98,15 @@ namespace Base
         BOOLEAN             getPoolState( UINT uiIndex, tagMemPoolState& poolState );
 
         void*               malloc( SIZE size );
-        void                free( void* p );
+        void                free( void* ptr );
 
     protected:
         // Inner method
 
     private: // method
+        void*               hookMalloc( SIZE size );
+        void                hookFree( void* ptr );
+
         BOOLEAN             addPoolBlock( tagMemPool* pMemPool );
         tagMemPool*         findFitPool( SIZE size, INT* pIndex = NULL );
         void                freeAllPool();

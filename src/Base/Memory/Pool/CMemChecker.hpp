@@ -8,6 +8,8 @@
 #ifndef DEF__BASE_CMEMCHECKER_HPP__
 #define DEF__BASE_CMEMCHECKER_HPP__
 
+#include <execinfo.h>
+
 namespace Base
 {
     class CMemChecker
@@ -37,64 +39,52 @@ namespace Base
             lsLinkCrashed   = 2
         };
 
+        struct tagBlockStat
+        {
+            SIZE                szBoundUp;
+            SIZE                szBoundDown;
+            
+            SIZE                szAllocTimes;
+            SIZE                szCurrentCount;
+            SIZE                szCurrentSize;
+            SIZE                szPeakCount;
+            SIZE                szPeakSize;
+        };
+
+        
         struct tagBlockHeader
         {
-            UINT                uiMagic1;
-            UINT                uiSize;         // Exact size requested by user.
-            UINT                uiClassID;      // Key of Class name, zero means unknown.
-            UINT                uiThreadID;     // thread id for check
+            SIZE                szMagiHeader;
+            UINT                uiClassID;          // Key of Class name, zero means unknown.
+            STHREAD_ID          tThreadID;          // thread id for check
+            SIZE                szSize;             // Exact size requested by user.
+            STRING              strBackTrace;       // backtrace for each block
+
             tagBlockHeader*     pNext;
             tagBlockHeader*     pPrev;
-            UINT                uiMagic2;
+            SIZE                szMagicTail;
         };
         typedef tagBlockHeader* PBlockHeader;
 
-        struct tagBlockStat
-        {
-            SIZE                uiBeginSize;
-            SIZE                uiEndSize;
-            LLONG               llAllocTimes;
-            UINT                uiCurrentCount;
-            SIZE                uiCurrentSize;
-            UINT                uiPeakCount;
-            SIZE                uiPeakSize;
-
-            tagBlockStat()
-                : uiBeginSize(0)
-                , uiEndSize(0)
-                , llAllocTimes(0)
-                , uiCurrentCount(0)
-                , uiCurrentSize(0)
-                , uiPeakCount(0)
-                , uiPeakSize(0)
-            {
-                ;
-            }
-        };
-
         struct tagThreadSize
         {
-            UINT  tID;
-            SIZE  tSize;
+            STHREAD_ID          tID;
+            SIZE                tSize;
         };
 
         struct tagClassStat
         {
-            UINT   uiInstanceCount;
-            SIZE   uiTotalSize;
+            SIZE                szInstanceCount;
+            SIZE                szTotalSize;
 
-            tagClassStat()
-                : uiInstanceCount(0)
-                , uiTotalSize(0)
-            {
-                ;
-            }
+            PBlockHeader        pUsedBlock;
         };
-        typedef SMAP< STRING, tagClassStat >        _MapClassStat;
-        typedef SMAP< UINT, MapClassStat >          _MapThreadStat;
+
+        typedef SMAP< STRING, tagClassStat >                _MapClassStat;
+        typedef SMAP< STHREAD_ID, _MapClassStat >           _MapThreadStat;
 
     public:// method
-        static UINT         getBlockExtSize();
+        static SIZE         getBlockExtSize();
 
         CMemChecker() ;
         virtual ~CMemChecker();
@@ -102,25 +92,25 @@ namespace Base
         void                initialize(BOOLEAN bCompactSizeRange, CMemAllocator* pMemAllocator = NULL);
 
         void*               malloc( SIZE size, UINT uiClassID = 0 );
-        void                free( void* p );
-        INT                 checkPtr( void* p, const STRING& pcHint = NULL );
+        void                free( void* ptr );
+        INT                 checkPtr( void* ptr, const STRING& pcHint = NULL );
 
         UINT                registClassName( const STRING& pcClassName );
-        void                registThreadName( UINT uiThreadID, const String& strThreadName);
+        void                registThreadName( UINT uiThreadID, const STRING& strThreadName);
 
-        void                setReportFile (const String& strReportFile );
-        BOOLEAN             outputState( UINT uiGPUMemorySize = 0 );
+        void                setReportFile (const STRING& );
+        BOOLEAN             outputState( ::std::fstream& );
 
         // =============== get total alloc state =================
-        SIZE                getCurrentAllocSize()      { return m_blockStatAll.uiCurrentSize; }
+        SIZE                getCurrentAllocSize()       { return m_blockStatAll.uiCurrentSize; }
         UINT                getCurrentAllocCount()      { return m_blockStatAll.uiCurrentCount; }
 
         // =============== get alloc state by thread =================
         UINT                getThreadCount();
-        UINT                getThreadID( UINT uiIndex );
+        STHREAD_ID          getThreadID( UINT uiIndex );
         SIZE                getThreadSize( UINT uiIndex );
 
-        BOOLEAN             generatePoolConfig( const String& strFileName, UINT uiIncBytes );
+        BOOLEAN             generatePoolConfig( const STRING& strFileName = STRING_NULL );
 
     protected:
 
@@ -129,14 +119,14 @@ namespace Base
         void                unlock( BOOLEAN bCtrlHook );
 
         void*               hookMalloc( SIZE size, UINT uiClassID );
-        void                hookFree( void* p );
+        void                hookFree( void* ptr );
 
         EBlockStatus        checkBlock( PBlockHeader pHeader );
         ELinkStatus         checkAllBlock( UINT &uiErrorBlockCount );
         void                linkBlock( PBlockHeader pHeader );
         void                unlinkBlock( PBlockHeader pHeader );
 
-       // BOOLEAN     outputStateToLogger( CLogger* pLogger, UINT uiGPUMemorySize );
+        BOOLEAN             outputStateToLogger( CLogger* pLogger );
 
         void                initSizeRange();
         INT                 calcRangeIndex( SIZE size );
@@ -151,7 +141,7 @@ namespace Base
         CMemAllocator*          m_pMemAllocator;
 
         String                  m_strReportFile;
-        UINT                    m_uiReportID;
+        BOOLEAN                 m_bBackTraceEnable;
 
         PBlockHeader            m_pBlockList;
 
@@ -160,14 +150,14 @@ namespace Base
         tagBlockStat            m_blockStatSize[SIZE_INFO_MAX_COUNT];
         UINT                    m_uiBadPtrAccess;
 
-        CSyncObject             m_syncObject;
-        INT                     m_iHookLock;
+        SMUTEX                  m_syncMutex;
+        ::std::atomic<INT>      m_amHookLock;
 
         UINT                    m_uiThreadCount;
         tagThreadSize           m_threadSize[SIZE_INFO_MAX_COUNT];
 
-        SMAP<UINT, STRING >     m_mapClassName;
-        SMAP<UINT, STRING >     m_mapThreadName;
+        SVECTOR<STRING>         m_aryClassName;
+        SMAP<UINT, STRING>      m_mapThreadName;
     };
 }
 

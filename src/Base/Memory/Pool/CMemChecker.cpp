@@ -1,36 +1,24 @@
-#include "BASE_Core.h"
-
-#ifdef OS_QNX
-    #include <wchar.h>
-    #include <malloc.h>
-#endif
-
-#if defined(OS_LINUX) || defined(OS_ANDROID)
-    #include <wchar.h>
-    #include <malloc.h>
-#endif
-
-#ifdef OS_WIN
-#endif
+#include <fstream>
+#include "CBase.hpp"
 
 namespace Base
 {
 ////////////////////////////////////////////////////////////////////////
 
-    #define MAGIC_WORD			0xfedabeeb
-    #define MAGIC_FREE			0xd8675309
-    #define MAGIC_TAIL			((char) 0xd7)
+    #define MAGIC_WORD            0xCDDCABBA
+    #define MAGIC_FREE            0x32235445
+    #define MAGIC_TAIL            ((CHAR) 0xd7)
 
-    #define SIZE_HEARDER		sizeof(tagBlockHeader)
-    #define SIZE_MAGIC_TAIL		sizeof(char)
+    static constexpr SIZE_HEARDER       = sizeof( tagBlockHeader );
+    static constexpr SIZE_MAGIC_TAIL    = sizeof( CHAR );
 
-    #define PTR_BLOCK_HEADER(ptr_data)					PBlockHeader((BYTE*)ptr_data - SIZE_HEARDER)
-    #define PTR_BLOCK_DATA(ptr_hdr)						(void*)((BYTE*)ptr_hdr + SIZE_HEARDER)
-    #define PTR_BLOCK_MAGIC_TAIL(ptr_hdr, data_size)	(char*)((BYTE*)ptr_hdr + SIZE_HEARDER + data_size)
+    #define PTR_BLOCK_HEADER(ptr_data)                      PBlockHeader( (BYTE*)ptr_data - SIZE_HEARDER )
+    #define PTR_BLOCK_DATA(ptr_hdr)                         (void*)( (BYTE*)ptr_hdr + SIZE_HEARDER )
+    #define PTR_BLOCK_MAGIC_TAIL(ptr_hdr, data_size)        (char*)( (BYTE*)ptr_hdr + SIZE_HEARDER + data_size )
 
 ////////////////////////////////////////////////////////////////////////
 
-    UINT CMemChecker::getBlockExtSize()
+    SIZE CMemChecker::getBlockExtSize()
     {
         return SIZE_HEARDER + SIZE_MAGIC_TAIL;
     }
@@ -44,190 +32,146 @@ namespace Base
         , m_iHookLock(0)
         , m_mapClassName(TRUE)
         , m_uiThreadCount( 0 )
+        , m_amHookLock( ATOMIC_VAR_INIT( 0 ) )
     {
-        wprintf(L"[Info][BASE] Memory check started.\n");
+        fprintf( stderr, "[Info][BASE] Memory check started.\n" );
 
         memset( m_threadSize, 0 , sizeof( tagThreadSize ) * SIZE_INFO_MAX_COUNT );
     }
 
     CMemChecker::~CMemChecker()
     {
-        wprintf(L"[Info][BASE] Memory check exited.\n");
+        fprintf( stderr, "[Info][BASE] Memory check exited.\n" );
     }
 
     void CMemChecker::initialize(BOOLEAN bCompactSizeRange, CMemAllocator* pMemAllocator)
     {
         m_bCompactSizeRange = bCompactSizeRange;
-        m_pMemAllocator = pMemAllocator;
+        m_pMemAllocator     = pMemAllocator;
 
         initSizeRange();
     }
 
-    void* CMemChecker::malloc(SIZE size, UINT uiClassID)
+    void* CMemChecker::malloc( SIZE size, UINT uiClassID )
     {
-        CAutoLocker autoLocker(this, FALSE);
+        ::std::lock_guard<SMUTEX> lock( m_syncMutex );
 
-        if (m_iHookLock == 0)
-        {
+        if ( !m_amHookLock.load( ::std::memory_order_acquire ) ) {
             return hookMalloc(size, uiClassID);
-        }
-        else
-        {
+        } else {
             return ::malloc(size);
         }
     }
 
-    void CMemChecker::free(void* p)
+    void CMemChecker::free( void* ptr )
     {
-        if (p == NULL)
-        {
-            return;
-        }
+        if ( !ptr )   return;
 
-        CAutoLocker autoLocker(this, FALSE);
+        ::std::lock_guard<SMUTEX> lock( m_syncMutex );
 
-        if (m_iHookLock == 0)
-        {
-            return hookFree(p);
-        }
-        else
-        {
-            ::free(p);
-            return;
+        if ( !m_amHookLock.load( ::std::memory_order_acquire ) ) {
+            hookFree( ptr );
+        } else {
+            ::free( ptr );
         }
     }
 
-    INT CMemChecker::checkPtr(void* p, const STRING& pcHint)
+    INT CMemChecker::checkPtr( void* ptr, const STRING& strHint )
     {
-        if (p == NULL)
-        {
-            // wprintf(L"[Warning][BASE] CheckPtr() at <%ls>: The Pointer is NULL!\n", pcHint);
+        if ( !ptr ) {
+            // fprintf( stderr, "[Warning][BASE] CheckPtr() at <%ls>: The Pointer is NULL!\n", strHint);
             return (INT)bsFreed;
         }
 
-        CAutoLocker autoLocker(this, TRUE);
+        ::std::lock_guard<SMUTEX> lock( m_syncMutex );
 
-        // To avoid nested call checkPtr.
-        if (m_iHookLock > 1)
-        {
-            return 0;
-        }
+        if ( !m_amHookLock.load( ::std::memory_order_acquire ) ) {
+            EBlockStatus status = checkBlock( PTR_BLOCK_HEADER( str ) );
 
-        EBlockStatus status = checkBlock(PTR_BLOCK_HEADER(p));
+            if ( status == bsOk )   return 0;
 
-        if (status == bsOk)
-        {
-            return 0;
-        }
-
-        if (pcHint == NULL)
-        {
-            pcHint = L"Unknown";
-        }
-
-        switch (status)
-        {
-        case bsFreed:
-            wprintf(L"[Warning][BASE] CheckPtr(0x%x) at <%ls>: Invalid Pointer, it had been freed before!\n", p, pcHint);
-            break;
-
-        case bsHeaderError:
-            wprintf(L"[Warning][BASE] CheckPtr(0x%x) at <%ls>: Invalid Pointer, Maybe it had been freed or crashed!\n", p, pcHint);
-            break;
-
-        case bsTailError:
-            wprintf(L"[Warning][BASE] CheckPtr(0x%x) at <%ls>: Pointer is Ok, but block was overflowed!\n", p, pcHint);
-            break;
-
-        default:
-            break;
-        }
-
-        return (INT)status;
-    }
-
-    UINT CMemChecker::registClassName(const STRING& pcClassName)
-    {
-        if (pcClassName == NULL)
-        {
-            return 0;
-        }
-
-        CAutoLocker autoLocker(this, TRUE);
-
-        // To avoid nested registClassName, because "new" will be called in this function.
-        if (m_iHookLock > 1)
-        {
-            return 0;
-        }
-
-        m_mapClassName.resetIterator();
-        while (m_mapClassName.hasMore())
-        {
-            MapPair<UINT, String> pair = m_mapClassName.nextKeyAndValue();
-            if (*pair.pData == pcClassName)
-            {
-                return *pair.pKey;
+            if ( strHint == STRING_NULL ) {
+                strHint = "Unknown";
             }
+
+            switch ( status ) {
+            case bsFreed:
+                fprintf( stderr, "[Warning][BASE] CheckPtr(0x%x) at <%ls>: Invalid Pointer, it had been freed before!\n", str, strHint );
+                break;
+            case bsHeaderError:
+                fprintf( stderr, "[Warning][BASE] CheckPtr(0x%x) at <%ls>: Invalid Pointer, Maybe it had been freed or crashed!\n", str, strHint);
+                break;
+            case bsTailError:
+                fprintf( stderr, "[Warning][BASE] CheckPtr(0x%x) at <%ls>: Pointer is Ok, but block was overflowed!\n", str, strHint);
+                break;
+            default:
+                break;
+            }
+
+            return (INT)status;
         }
 
-        UINT uiClassID = m_mapClassName.size() + 1;
-        m_mapClassName.addItem(uiClassID, new String(pcClassName));
-
-        return uiClassID;
+        return 0;
     }
 
-    void CMemChecker::registThreadName( UINT uiThreadID, const String& strThreadName)
+    UINT CMemChecker::registClassName( const STRING& strClassName )
     {
-        if ( strThreadName.length() == 0 )
-        {
-            return;
+        if ( strClassName == STRING_NULL ) {
+            return 0;
         }
 
-        CAutoLocker autoLocker(this, TRUE);
-
-        // To avoid nested registClassName, because "new" will be called in this function.
-        if (m_iHookLock > 1)
+        if ( !m_amHookLock.load( ::std::memory_order_acquire ) ) {
         {
-            return;
+            ::std::lock_guard<SMUTEX> lock( m_syncMutex );
+
+            ++m_amHookLock;
+
+            for ( UINT i = 0; i < m_aryClassName.size(); ++i ) {
+                if ( m_aryClassName[i] == strClassName ) {
+                    return i;
+                }
+            }
+
+            m_aryClassName.push_back( strClassName );
+
+            --m_amHookLock;
+
+            return m_aryClassName.size() - 1;
         }
 
-        m_mapThreadName.setItem( uiThreadID, new String( strThreadName ) );
+        return 0;
+    }
+
+    void CMemChecker::registThreadName( UINT uiThreadID, const STRING& strThreadName )
+    {
+        if ( strThreadName.empty() )  return;
+
+        if ( !m_amHookLock.load( ::std::memory_order_acquire ) ) {
+            ::std::lock_guard<SMUTEX> lock( m_syncMutex );
+            m_mapThreadName[ uiThreadID ] = strThreadName;
+        }
     }
 
     void CMemChecker::setReportFile(const String& strReportFile)
     {
-        CAutoLocker autoLocker(this, TRUE);
+        ::std::lock_guard<SMUTEX> lock( m_syncMutex );
+
         m_strReportFile = strReportFile;
     }
 
     BOOLEAN CMemChecker::outputState(UINT uiGPUMemorySize)
     {
-        CAutoLocker autoLocker(this, TRUE);
+        if ( !m_strReportFile.empty() ) {
+            ::std::fstream fs;
 
-        if (m_strReportFile.length() > 0)
-        {
-            BASE::CFile file;
+            fs.open( m_strReportFile, ::std::ios::out );
 
-            if (!file.open(m_strReportFile, m_uiReportID == 0 ? L"wb" : L"ab+"))
-            {
-                return FALSE;
+            if ( fs.is_open() ) {
+                return outputStateToLogger( fs );
             }
-
-            CLogger logger(&file);
-            return outputStateToLogger(&logger, uiGPUMemorySize);
         }
-        else
-        {
-            wprintf(L"[Info][BASE] ------ BASE Memory State Report ------\n");
 
-            CLogger logger(NULL);
-            BOOLEAN bRet = outputStateToLogger(&logger, uiGPUMemorySize);
-
-            wprintf(L"[Info][BASE] -----------------------------------------\n");
-
-            return bRet;
-        }
+        return FALSE;
     }
 
     UINT CMemChecker::getThreadCount()
@@ -251,112 +195,40 @@ namespace Base
 
     BOOLEAN CMemChecker::generatePoolConfig(const String& strFileName, UINT uiIncBytes)
     {
-        if (!m_bCompactSizeRange)
-        {
-            return FALSE;
-        }
-
-        CAutoLocker autoLocker(this, TRUE);
-
-        CFile file;
-
-        if (!file.open((const STRING&)strFileName, FALSE))
-        {
-            return FALSE;
-        }
-
-        CLogger logger(&file);
-
-        UINT uiIndex = 0;
-        UINT uiCurrentCount = 0;
-        UINT uiPeakCount = 0;
-        UINT uiUnitSize = uiIncBytes;
-
-        for (INT i = 0; i < SIZE_INFO_MAX_COUNT; ++i)
-        {
-            if (m_blockStatSize[i].uiEndSize <= uiUnitSize)
-            {
-                uiCurrentCount += m_blockStatSize[i].uiCurrentCount;
-                uiPeakCount += m_blockStatSize[i].uiPeakCount;
-
-                continue;
-            }
-            else
-            {
-                logger.writeLine(String::format(L"pool_%u={unit_size:%u,init_count:%u,max_count:%u,append_count:0};\n",
-                                                uiIndex + 1,
-                                                uiUnitSize,
-                                                uiCurrentCount,
-                                                uiPeakCount));
-                ++uiIndex;
-                uiUnitSize += uiIncBytes;
-                uiCurrentCount = m_blockStatSize[i].uiCurrentCount;
-                uiPeakCount = m_blockStatSize[i].uiPeakCount;
-            }
-
-            if (m_blockStatSize[i].uiBeginSize > 1024)
-            {
-                break;
-            }
-        }
+        // generate new mem pool config
 
         return TRUE;
     }
 
-    void CMemChecker::lock(BOOLEAN bCtrlHook)
-    {
-        m_syncObject.lock();
-
-        if (bCtrlHook)
-        {
-            m_iHookLock++;
-        }
-    }
-
-    void CMemChecker::unlock(BOOLEAN bCtrlHook)
-    {
-        if (bCtrlHook)
-        {
-            m_iHookLock--;
-        }
-        m_syncObject.unlock();
-    }
-
-    void* CMemChecker::hookMalloc(SIZE size, UINT uiClassID)
+    void* CMemChecker::hookMalloc( SIZE size, UINT uiClassID )
     {
         UINT uiSize = size + getBlockExtSize();
         PBlockHeader pHeader = NULL;
+
         {
-            if (m_pMemAllocator)
-            {
-                pHeader = (PBlockHeader)(m_pMemAllocator->malloc(uiSize));
-            }
-            else
-            {
+            if ( m_pMemAllocator ) {
+                pHeader = (PBlockHeader)( m_pMemAllocator->malloc( uiSize ) );
+            } else {
                 pHeader = (PBlockHeader)::malloc(uiSize);
             }
         }
 
-        if (pHeader == NULL)
-        {
-            return NULL;
-        }
+        if ( !pHeader )     return NULL;
 
         {
-            CAutoLocker autoLocker(this, TRUE);
+            ::std::lock_guard<SMUTEX> lock( m_syncMutex );
 
-            linkBlock(pHeader);
-
-            pHeader->uiSize         = size;
+            pHeader->szSize         = size;
             pHeader->uiClassID      = uiClassID;
-            pHeader->uiThreadID     = CThread::getCurrentThreadId();
-            *(PTR_BLOCK_MAGIC_TAIL(pHeader, size)) = MAGIC_TAIL;
+            pHeader->tThreadID      = ::std::this_thread::get_id();
+            *( PTR_BLOCK_MAGIC_TAIL( pHeader, size ) ) = MAGIC_TAIL;
+
+            linkBlock( pHeader );
 
             logAllocSize(size);
 
             UINT ui = 0;
-            for ( ; ui < m_uiThreadCount; ++ui )
-            {
+            for ( ; ui < m_uiThreadCount; ++ui ) {
                 if ( m_threadSize[ui].tID == pHeader->uiThreadID )
                 {
                     break;
@@ -381,19 +253,18 @@ namespace Base
             m_uiBadPtrAccess++;
             if (pHeader->uiClassID != 0)
             {
-                wprintf(L"[Warning][BASE] Free(0x%X)<%ls>: Invalid Pointer. Block had been freed before!\n", p, (const STRING&)(*m_mapClassName.getValueByKey(pHeader->uiClassID)));
+                fprintf( stderr, "[Warning][BASE] Free(0x%X)<%ls>: Invalid Pointer. Block had been freed before!\n", p, (const STRING&)(*m_mapClassName.getValueByKey(pHeader->uiClassID)));
             }
             else
             {
-                wprintf(L"[Warning][BASE] Free(0x%X): Invalid Pointer. Block had been freed before!\n", p);
+                fprintf( stderr, "[Warning][BASE] Free(0x%X): Invalid Pointer. Block had been freed before!\n", p);
             }
             return;
         }
 
-        if (status == bsHeaderError)
-        {
+        if (status == bsHeaderError) {
             m_uiBadPtrAccess++;
-            wprintf(L"[Warning][BASE] Free(0x%X): Invalid Pointer. Maybe Block had been freed or crashed!\n", p);
+            fprintf( stderr, "[Warning][BASE] Free(0x%X): Invalid Pointer. Maybe Block had been freed or crashed!\n", p);
             return;
         }
 
@@ -402,11 +273,11 @@ namespace Base
             m_uiBadPtrAccess++;
             if (pHeader->uiClassID != 0)
             {
-                wprintf(L"[Warning][BASE] Free(0x%X)<%ls>: Block was overflow!\n", p, (const STRING&)(*m_mapClassName.getValueByKey(pHeader->uiClassID)));
+                fprintf( stderr, "[Warning][BASE] Free(0x%X)<%ls>: Block was overflow!\n", p, (const STRING&)(*m_mapClassName.getValueByKey(pHeader->uiClassID)));
             }
             else
             {
-                wprintf(L"[Warning][BASE] Free(0x%X): Block was overflow!\n", p);
+                fprintf( stderr, "[Warning][BASE] Free(0x%X): Block was overflow!\n", p);
             }
         }
 
@@ -427,8 +298,8 @@ namespace Base
             }
             if ( ui == m_uiThreadCount ) ++m_uiThreadCount;
 
-            m_threadSize[ui].tID	= pHeader->uiThreadID;
-            m_threadSize[ui].tSize	-= pHeader->uiSize;
+            m_threadSize[ui].tID    = pHeader->uiThreadID;
+            m_threadSize[ui].tSize  -= pHeader->uiSize;
         }
 
         {
@@ -621,7 +492,7 @@ namespace Base
                 fAvgSize = FLOAT(m_blockStatSize[i].uiCurrentSize) / m_blockStatSize[i].uiCurrentCount;
             }
 
-            pLogger->writeLine(String::format(	L"\"[%u, %u]\",\"%lld\",\"%u\",\"%u\",\"%u\",\"%u\",\"%.1f\"\n",
+            pLogger->writeLine(String::format(    L"\"[%u, %u]\",\"%lld\",\"%u\",\"%u\",\"%u\",\"%u\",\"%.1f\"\n",
                                                 m_blockStatSize[i].uiBeginSize,
                                                 m_blockStatSize[i].uiEndSize,
                                                 m_blockStatSize[i].llAllocTimes,
@@ -643,7 +514,7 @@ namespace Base
             fAvgSizeAll = FLOAT(m_blockStatAll.uiCurrentSize) / m_blockStatAll.uiCurrentCount;
         }
 
-        pLogger->writeLine(String::format(	L"\"<All>\",\"%lld\",\"%u\",\"%u\",\"%u\",\"%u\",\"%.1f\"\n",
+        pLogger->writeLine(String::format(    L"\"<All>\",\"%lld\",\"%u\",\"%u\",\"%u\",\"%u\",\"%.1f\"\n",
                                             m_blockStatAll.llAllocTimes,
                                             m_blockStatAll.uiCurrentCount,
                                             m_blockStatAll.uiCurrentSize,
@@ -674,7 +545,7 @@ namespace Base
                     poolState.uiMemoryCost -= uiCheckExtSize * poolState.uiCurrentCount;
                     FLOAT fFreePercent = FLOAT(poolState.uiFreeCount * 100.0) / poolState.uiCurrentCount;
 
-                    pLogger->writeLine(String::format(	L"\"%u\",\"%u\",\"%u\",\"%u\",\"%u\",\"%u\",\"%.1f%%\"\n",
+                    pLogger->writeLine(String::format(    L"\"%u\",\"%u\",\"%u\",\"%u\",\"%u\",\"%u\",\"%.1f%%\"\n",
                                                         uiIndex + 1,
                                                         poolState.uiMemoryCost,
                                                         poolState.uiUnitAvailSize,
@@ -685,7 +556,7 @@ namespace Base
                 }
                 else
                 {
-                    pLogger->writeLine(String::format(	L"\"%u\",\"0\",\"%u\",\"%u\",\"0\",\" \",\" \"\n",
+                    pLogger->writeLine(String::format(    L"\"%u\",\"0\",\"%u\",\"%u\",\"0\",\" \",\" \"\n",
                         uiIndex + 1,
                         poolState.uiUnitAvailSize,
                         poolState.uiMaxCount));
@@ -726,8 +597,8 @@ namespace Base
             //pLogger->writeLine(String::format(L"\"<GPU Used(Estimate)>\",\"---\",\"%u\"\n", uiGPUMemorySize));
             MapPair< UINT, MapClassStat > pair = mapThreadStat.getKeyValueByIndex(i);
 
-            UINT			uiThreadID		= *( pair.pKey );
-            MapClassStat*	mapClassStat	= pair.pData;
+            UINT            uiThreadID        = *( pair.pKey );
+            MapClassStat*    mapClassStat    = pair.pData;
 
             String* pStrThreadName = m_mapThreadName.getValueByKey( uiThreadID );
             if ( pStrThreadName )
@@ -746,13 +617,13 @@ namespace Base
 
                 if (strClassName == STRING_NULL)
                 {
-                    pLogger->writeLine(String::format(	L"\"\",\"<UnregisteredClass or AtomType>\",\"%u\",\"%u\"\n",
+                    pLogger->writeLine(String::format(    L"\"\",\"<UnregisteredClass or AtomType>\",\"%u\",\"%u\"\n",
                                                         pClassStat->uiInstanceCount,
                                                         pClassStat->uiTotalSize));
                 }
                 else
                 {
-                    pLogger->writeLine(String::format(	L"\"\",\"%ls\",\"%u\",\"%u\"\n",
+                    pLogger->writeLine(String::format(    L"\"\",\"%ls\",\"%u\",\"%u\"\n",
                                                         (const STRING&)(strClassName),
                                                         pClassStat->uiInstanceCount,
                                                         pClassStat->uiTotalSize));
@@ -775,7 +646,7 @@ namespace Base
     {
         if (m_bCompactSizeRange == FALSE)
         {
-            //	[1,4] [5,8] [9,16] [17,32] [33,64] ... [0x80000000, 0xFFFFFFFF]
+            //    [1,4] [5,8] [9,16] [17,32] [33,64] ... [0x80000000, 0xFFFFFFFF]
 
             // uiIndex = 0
             m_blockStatSize[0].uiBeginSize = 1;
@@ -796,7 +667,7 @@ namespace Base
         }
         else
         {
-            //	[1,4] [5,8] [9,12] [13,16] [17,20] ...[509, 512]  ==> [513, 1024] ... [0x80000000, 0xFFFFFFFF]
+            //    [1,4] [5,8] [9,12] [13,16] [17,20] ...[509, 512]  ==> [513, 1024] ... [0x80000000, 0xFFFFFFFF]
 
             // uiIndex = 0 ~ 127
             UINT uiIndex = 0;

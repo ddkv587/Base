@@ -36,6 +36,7 @@ namespace Base
     typedef         float                           FLOAT;
     typedef         double                          DOUBLE;
     typedef         size_t                          SIZE;
+    typedef         uintptr_t                       UINTPTR;
 
     typedef         UINT8                           BYTE;
     typedef         INT64                           LONG;
@@ -45,6 +46,7 @@ namespace Base
     
     typedef         ::std::string                   STRING;
     typedef         ::std::thread                   STHREAD;
+    typedef         ::std::thread::id               STHREAD_ID;
     typedef         ::std::mutex                    SMUTEX;
     typedef         ::std::condition_variable       SCONDITION;
 
@@ -53,7 +55,7 @@ namespace Base
     template< class T > using SQUEUE           = ::std::queue< T >;
     template< class T > using SSTACK           = ::std::stack< T >;
     template< class Key, class Value, class Compare = ::std::less<Key> > 
-    using SMAP             = ::std::map< Key, Value, Compare >;
+    using SMAP = ::std::map< Key, Value, Compare >;
 }
 
 #endif

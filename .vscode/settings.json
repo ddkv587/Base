@@ -51,6 +51,7 @@
         "valarray": "cpp",
         "xhash": "cpp",
         "fstream": "cpp",
-        "cstdarg": "cpp"
+        "cstdarg": "cpp",
+        "cstdint": "cpp"
     }
 }
